@@ -25,15 +25,16 @@ function ObraCard({ ciudad, proyecto, porcentaje, fase, imageSrc }) {
         <img
           src={imageSrc}
           alt={ciudad}
-          className="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:opacity-90 transition-opacity duration-500"
-          onError={(e) => { e.target.style.src='/images/hero-obra.jpg'; }}
+          className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500"
+          style={{ filter: "brightness(0.9)" }}
+          onError={(e) => { e.target.style.display = 'none'; }}
         />
         <div className="absolute top-4 left-4 bg-[#1A5C33] px-3 py-1">
           <span className="text-[10px] text-white font-bold tracking-widest uppercase">{fase}</span>
         </div>
       </div>
       <div className="p-6">
-        <h4 className="text-white font-display text-xl mb-1 tracking-tight">{ciudad}</h4>
+        <h4 className="text-white font-display text-xl mb-1 tracking-tight uppercase">{ciudad}</h4>
         <p className="text-[#8a9a8b] text-xs mb-4 uppercase tracking-wider">{proyecto}</p>
         <div className="space-y-2">
           <div className="flex justify-between items-end">
@@ -71,33 +72,53 @@ export default function Home() {
   if (!mounted) return <div className="min-h-screen bg-[#060d07]" />;
 
   return (
-    <main className="relative min-h-screen bg-[#060d07] text-white">
+    <main className="relative min-h-screen bg-[#060d07] text-white font-sans">
+      {/* HERO SECTION */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden bg-black">
         <div className="absolute inset-0 z-0">
           <img
             src="/images/hero-obra.jpg"
-            alt="Hero"
+            alt="Infraestructura Mercahorro"
             className="absolute inset-0 w-full h-full object-cover"
-            style={{ filter: "brightness(0.4) contrast(1.1)" }}
+            style={{ filter: "brightness(0.65) contrast(1.1)" }}
           />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#060d07] via-transparent to-transparent opacity-80"></div>
         </div>
         <div className="container mx-auto px-6 relative z-10 text-center">
-          <h1 className="font-display text-6xl md:text-8xl font-black mb-6 tracking-tighter uppercase">CONSTRUIMOS <br /> EL ABASTO</h1>
-          <p className="text-[#c0cfc1] max-w-2xl mx-auto text-lg font-light mb-10">Desarrollador inmobiliario especializado en la red logística agroalimentaria del norte de México.</p>
+          <h1 className="font-display text-6xl md:text-8xl font-black mb-6 tracking-tighter uppercase leading-none">
+            CONSTRUIMOS <br /> <span className="text-[#1A5C33]">EL ABASTO</span>
+          </h1>
+          <p className="text-[#c0cfc1] max-w-2xl mx-auto text-lg font-light mb-10">
+            Desarrollador inmobiliario especializado en la red logística agroalimentaria del norte de México.
+          </p>
         </div>
       </section>
 
+      {/* STATS SECTION */}
       <section ref={statsRef} className="py-24 bg-[#0a140c] border-y border-[#1A5C33]/20">
         <div className="container mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
-          <div><span className="text-6xl font-display font-black">{years}</span><p className="text-[#8a9a8b] text-xs uppercase tracking-widest">Años de Trayectoria</p></div>
-          <div><span className="text-6xl font-display font-black">+{properties}</span><p className="text-[#8a9a8b] text-xs uppercase tracking-widest">Propiedades</p></div>
-          <div><span className="text-6xl font-display font-black">{influence}</span><p className="text-[#8a9a8b] text-xs uppercase tracking-widest">Puntos de Influencia</p></div>
+          <div>
+            <span className="text-6xl font-display font-black text-white">{years}</span>
+            <p className="text-[#8a9a8b] text-xs uppercase tracking-[0.2em] mt-2">Años de Trayectoria</p>
+          </div>
+          <div>
+            <span className="text-6xl font-display font-black text-white">+{properties}</span>
+            <p className="text-[#8a9a8b] text-xs uppercase tracking-[0.2em] mt-2">Propiedades</p>
+          </div>
+          <div>
+            <span className="text-6xl font-display font-black text-white">{influence}</span>
+            <p className="text-[#8a9a8b] text-xs uppercase tracking-[0.2em] mt-2">Puntos de Influencia</p>
+          </div>
         </div>
       </section>
 
+      {/* BITÁCORA SECTION */}
       <section className="py-32 bg-[#060d07]">
         <div className="container mx-auto px-6">
-          <h2 className="font-display text-4xl font-black mb-16 uppercase">BITÁCORA DE DESARROLLO</h2>
+          <div className="flex items-center gap-4 mb-16">
+            <div className="h-[2px] w-12 bg-[#1A5C33]"></div>
+            <h2 className="font-display text-4xl font-black uppercase tracking-tight">Bitácora de Desarrollo</h2>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <ObraCard ciudad="Monterrey" proyecto="Abastos Estrella" porcentaje={72} fase="Estructura" imageSrc="/images/obra-monterrey.jpg" />
             <ObraCard ciudad="Torreón" proyecto="Mercahorro Central" porcentaje={88} fase="Acabados" imageSrc="/images/obra-torreon.jpg" />
@@ -105,6 +126,13 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* FOOTER SIMPLE */}
+      <footer className="py-12 bg-[#050a06] border-t border-white/5 text-center">
+        <p className="text-[#4a5a4b] text-[10px] uppercase tracking-[0.3em]">
+          © 2026 Grupo Mercahorro • Infraestructura Agroalimentaria
+        </p>
+      </footer>
     </main>
   );
 }
