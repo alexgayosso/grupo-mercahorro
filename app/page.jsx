@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 
 /* ─── COUNTER HOOK ─── */
 function useCounter(target, duration = 2000, active = false) {
@@ -18,6 +18,182 @@ function useCounter(target, duration = 2000, active = false) {
     requestAnimationFrame(tick);
   }, [active, target, duration]);
   return val;
+}
+
+/* ─── PHOTO MODAL ─── */
+function PhotoModal({ proyecto, ciudad, estado, status, pct, fase, fotos, onClose }) {
+  const [active, setActive] = useState(0);
+
+  // Cerrar con Escape
+  useEffect(() => {
+    const handler = (e) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [onClose]);
+
+  // Bloquear scroll del body
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = ""; };
+  }, []);
+
+  const badgeColor = { "en-obra": "#9B1C1C", "operando": "#1A5C33", "por-iniciar": "#3D1C02" }[status];
+  const badgeLabel = { "en-obra": "En Obra", "operando": "Operando", "por-iniciar": "Obra por Iniciar" }[status];
+  const hasFotos = fotos && fotos.length > 0;
+
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: "fixed", inset: 0, zIndex: 999,
+        background: "rgba(0,0,0,0.82)",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        padding: "20px",
+      }}
+    >
+      <div
+        onClick={e => e.stopPropagation()}
+        style={{
+          background: "#fff", borderRadius: 16,
+          width: "100%", maxWidth: 860,
+          maxHeight: "90vh", overflow: "hidden",
+          display: "flex", flexDirection: "column",
+        }}
+      >
+        {/* Header */}
+        <div style={{
+          padding: "20px 24px", borderBottom: "1px solid #e5e7eb",
+          display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16,
+        }}>
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+              <span style={{
+                background: badgeColor, color: "#fff",
+                fontSize: 10, fontWeight: 700, letterSpacing: "0.15em",
+                textTransform: "uppercase", padding: "3px 10px", borderRadius: 4,
+              }}>{badgeLabel}</span>
+              {status === "en-obra" && (
+                <span style={{ fontSize: 13, fontWeight: 700, color: "#1A5C33" }}>{pct}% avance</span>
+              )}
+            </div>
+            <h2 style={{ margin: 0, fontSize: 22, fontWeight: 900, color: "#111" }}>{proyecto}</h2>
+            <p style={{ margin: "2px 0 0", fontSize: 13, color: "#6b7280" }}>
+              {ciudad}, {estado} · {fase}
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            style={{
+              background: "#f3f4f6", border: "none", borderRadius: 8,
+              width: 36, height: 36, cursor: "pointer", fontSize: 18,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              color: "#374151", flexShrink: 0,
+            }}
+          >✕</button>
+        </div>
+
+        {/* Contenido galería */}
+        <div style={{ overflow: "auto", flex: 1 }}>
+          {hasFotos ? (
+            <>
+              {/* Foto principal */}
+              <div style={{ position: "relative", background: "#111", height: 360 }}>
+                <img
+                  src={fotos[active]}
+                  alt={`${proyecto} — foto ${active + 1}`}
+                  style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                />
+                {/* Navegación prev/next */}
+                {fotos.length > 1 && (
+                  <>
+                    <button
+                      onClick={() => setActive(a => (a - 1 + fotos.length) % fotos.length)}
+                      style={{
+                        position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)",
+                        background: "rgba(0,0,0,0.6)", color: "#fff", border: "none",
+                        borderRadius: 8, width: 40, height: 40, fontSize: 20, cursor: "pointer",
+                      }}
+                    >‹</button>
+                    <button
+                      onClick={() => setActive(a => (a + 1) % fotos.length)}
+                      style={{
+                        position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)",
+                        background: "rgba(0,0,0,0.6)", color: "#fff", border: "none",
+                        borderRadius: 8, width: 40, height: 40, fontSize: 20, cursor: "pointer",
+                      }}
+                    >›</button>
+                    <div style={{
+                      position: "absolute", bottom: 12, right: 12,
+                      background: "rgba(0,0,0,0.6)", color: "#fff",
+                      fontSize: 12, padding: "4px 10px", borderRadius: 6,
+                    }}>
+                      {active + 1} / {fotos.length}
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* Miniaturas */}
+              {fotos.length > 1 && (
+                <div style={{
+                  display: "flex", gap: 8, padding: "12px 16px",
+                  overflowX: "auto", background: "#f9fafb",
+                  borderTop: "1px solid #e5e7eb",
+                }}>
+                  {fotos.map((f, i) => (
+                    <div
+                      key={i}
+                      onClick={() => setActive(i)}
+                      style={{
+                        flexShrink: 0, width: 72, height: 56,
+                        borderRadius: 6, overflow: "hidden",
+                        border: i === active ? "2px solid #1A5C33" : "2px solid transparent",
+                        cursor: "pointer", opacity: i === active ? 1 : 0.6,
+                        transition: "opacity 0.2s, border-color 0.2s",
+                      }}
+                    >
+                      <img src={f} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
+          ) : (
+            /* Sin fotos aún */
+            <div style={{
+              padding: "60px 40px", textAlign: "center",
+            }}>
+              <div style={{ fontSize: 48, marginBottom: 16 }}>📷</div>
+              <h3 style={{ margin: "0 0 8px", fontSize: 18, fontWeight: 800, color: "#111" }}>
+                Galería en preparación
+              </h3>
+              <p style={{ margin: 0, fontSize: 14, color: "#6b7280", maxWidth: 340, margin: "0 auto" }}>
+                Las fotos de avance de {proyecto} estarán disponibles próximamente.
+                Actualiza con regularidad para seguir el progreso de la obra.
+              </p>
+            </div>
+          )}
+
+          {/* Barra de progreso en modal — si aplica */}
+          {status === "en-obra" && (
+            <div style={{ padding: "16px 24px", borderTop: "1px solid #e5e7eb" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+                <span style={{ fontSize: 13, color: "#6b7280", fontWeight: 600 }}>Avance físico documentado</span>
+                <span style={{ fontSize: 14, fontWeight: 800, color: "#1A5C33" }}>{pct}%</span>
+              </div>
+              <div style={{ background: "#e5e7eb", borderRadius: 4, height: 10 }}>
+                <div style={{
+                  height: "100%", width: `${pct}%`,
+                  background: "#1A5C33", borderRadius: 4,
+                  transition: "width 1s ease",
+                }} />
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 /* ─── PROGRESS BAR ─── */
@@ -49,7 +225,7 @@ function ProgressBar({ pct }) {
 
 /* ─── OBRA CARD ─── */
 // status: "en-obra" | "operando" | "por-iniciar"
-function ObraCard({ ciudad, estado, proyecto, pct, fase, img, status = "en-obra" }) {
+function ObraCard({ ciudad, estado, proyecto, pct, fase, img, status = "en-obra", onClick }) {
   const badge = {
     "en-obra":    { label: "En Obra",        bg: "#9B1C1C" },
     "operando":   { label: "Operando",        bg: "#1A5C33" },
@@ -59,11 +235,16 @@ function ObraCard({ ciudad, estado, proyecto, pct, fase, img, status = "en-obra"
   const showBar = status !== "por-iniciar";
 
   return (
-    <div style={{
-      background: "#fff", border: "1px solid #d1d5db",
-      borderRadius: 12, overflow: "hidden",
-      display: "flex", flexDirection: "column",
-    }}>
+    <div
+      onClick={onClick}
+      onMouseEnter={e => { e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,0.12)"; e.currentTarget.style.transform = "translateY(-3px)"; }}
+      onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.transform = "translateY(0)"; }}
+      style={{
+        background: "#fff", border: "1px solid #d1d5db",
+        borderRadius: 12, overflow: "hidden",
+        display: "flex", flexDirection: "column",
+        cursor: "pointer", transition: "box-shadow 0.2s, transform 0.2s",
+      }}>
       {/* Imagen */}
       <div style={{ position: "relative", height: 180, background: "#1A5C33", overflow: "hidden", flexShrink: 0 }}>
         <img src={img} alt={`Avance ${ciudad}`}
@@ -77,6 +258,15 @@ function ObraCard({ ciudad, estado, proyecto, pct, fase, img, status = "en-obra"
           textTransform: "uppercase", padding: "3px 10px", borderRadius: 4,
         }}>
           {badge.label}
+        </div>
+        {/* Icono "ver galería" */}
+        <div style={{
+          position: "absolute", top: 10, right: 10,
+          background: "rgba(0,0,0,0.55)", color: "#fff",
+          fontSize: 11, fontWeight: 600, padding: "3px 10px", borderRadius: 4,
+          letterSpacing: "0.05em",
+        }}>
+          📷 Ver fotos
         </div>
         {/* Porcentaje — solo si aplica */}
         {status !== "por-iniciar" && (
@@ -145,6 +335,10 @@ export default function MercahorroPage() {
   const [statsOn, setStatsOn] = useState(false);
   const statsRef = useRef(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [modalData, setModalData] = useState(null);
+
+  const openModal = useCallback((data) => setModalData(data), []);
+  const closeModal = useCallback(() => setModalData(null), []);
 
   const anos = useCounter(17, 1600, statsOn);
   const props = useCounter(300, 2000, statsOn);
@@ -396,41 +590,61 @@ export default function MercahorroPage() {
 
           {/* Grid de tarjetas — 3 columnas desktop, 1 mobile */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24 }}>
-            <ObraCard
-              ciudad="Monterrey" estado="N.L."
-              proyecto="Mercahorro Monterrey"
-              pct={72} fase="Estructura — Nivel 3 completado"
-              img="/images/obra-monterrey.jpg"
-              status="en-obra"
-            />
-            <ObraCard
-              ciudad="Torreón" estado="Coah."
-              proyecto="Mercahorro Torreón"
-              pct={100} fase="Plaza mayorista en operación continua"
-              img="/images/obra-torreon.jpg"
-              status="operando"
-            />
-            <ObraCard
-              ciudad="Gómez Palacio" estado="Dgo."
-              proyecto="Mercahorro Gómez Palacio"
-              pct={70} fase="Estructura — Segunda etapa en proceso"
-              img="/images/obra-gomez-palacio.jpg"
-              status="en-obra"
-            />
-            <ObraCard
-              ciudad="Torreón" estado="Coah."
-              proyecto="Plaza Abastos Torreón"
-              pct={100} fase="Centro comercial de abasto en operación"
-              img="/images/obra-plaza-abastos-torreon.jpg"
-              status="operando"
-            />
-            <ObraCard
-              ciudad="Silao" estado="Gto."
-              proyecto="Mercahorro Silao"
-              pct={0} fase="Gestión de permisos — Inicio de obra programado"
-              img="/images/obra-silao-render.jpg"
-              status="por-iniciar"
-            />
+            {[
+              {
+                ciudad: "Monterrey", estado: "N.L.",
+                proyecto: "Mercahorro Monterrey",
+                pct: 72, fase: "Estructura — Nivel 3 completado",
+                img: "/images/obra-monterrey.jpg", status: "en-obra",
+                fotos: [
+                  "/images/obra-monterrey.jpg",
+                  "/images/bitacora/monterrey-01.jpg",
+                  "/images/bitacora/monterrey-02.jpg",
+                ],
+              },
+              {
+                ciudad: "Torreón", estado: "Coah.",
+                proyecto: "Mercahorro Torreón",
+                pct: 100, fase: "Plaza mayorista en operación continua",
+                img: "/images/obra-torreon.jpg", status: "operando",
+                fotos: [
+                  "/images/obra-torreon.jpg",
+                  "/images/bitacora/torreon-01.jpg",
+                ],
+              },
+              {
+                ciudad: "Gómez Palacio", estado: "Dgo.",
+                proyecto: "Mercahorro Gómez Palacio",
+                pct: 70, fase: "Estructura — Segunda etapa en proceso",
+                img: "/images/obra-gomez-palacio.jpg", status: "en-obra",
+                fotos: [
+                  "/images/obra-gomez-palacio.jpg",
+                  "/images/bitacora/gomez-01.jpg",
+                  "/images/bitacora/gomez-02.jpg",
+                  "/images/bitacora/gomez-03.jpg",
+                ],
+              },
+              {
+                ciudad: "Torreón", estado: "Coah.",
+                proyecto: "Plaza Abastos Torreón",
+                pct: 100, fase: "Centro comercial de abasto en operación",
+                img: "/images/obra-plaza-abastos-torreon.jpg", status: "operando",
+                fotos: ["/images/obra-plaza-abastos-torreon.jpg"],
+              },
+              {
+                ciudad: "Silao", estado: "Gto.",
+                proyecto: "Mercahorro Silao",
+                pct: 0, fase: "Gestión de permisos — Inicio de obra programado",
+                img: "/images/obra-silao-render.jpg", status: "por-iniciar",
+                fotos: ["/images/obra-silao-render.jpg"],
+              },
+            ].map((p) => (
+              <ObraCard
+                key={p.proyecto}
+                {...p}
+                onClick={() => openModal(p)}
+              />
+            ))}
           </div>
         </div>
       </section>
@@ -722,6 +936,14 @@ export default function MercahorroPage() {
           </div>
         </div>
       </footer>
+
+      {/* ══ MODAL GALERÍA ══ */}
+      {modalData && (
+        <PhotoModal
+          {...modalData}
+          onClose={closeModal}
+        />
+      )}
 
       {/* ── Estilos responsivos inline ── */}
       <style>{`
