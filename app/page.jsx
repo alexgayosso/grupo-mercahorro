@@ -20,30 +20,22 @@ function useCounter(target, duration = 2000, start = false) {
 
 function ObraCard({ ciudad, proyecto, porcentaje, fase, imageSrc }) {
   return (
-    <div className="border border-[#1A5C33]/40 bg-[#0d1a10] overflow-hidden group hover:border-[#1A5C33] transition-colors duration-300">
-      <div className="relative h-48 overflow-hidden bg-[#1a1a1a]">
-        <img
-          src={imageSrc}
-          alt={ciudad}
-          className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500"
-          style={{ filter: "brightness(0.9)" }}
-          onError={(e) => { e.target.style.display = 'none'; }}
-        />
-        <div className="absolute top-4 left-4 bg-[#1A5C33] px-3 py-1">
-          <span className="text-[10px] text-white font-bold tracking-widest uppercase">{fase}</span>
+    <div className="bg-white border border-zinc-200 overflow-hidden shadow-xl group hover:shadow-2xl transition-all duration-300">
+      <div className="relative h-64 bg-zinc-100">
+        <img src={imageSrc} alt={ciudad} className="absolute inset-0 w-full h-full object-cover" loading="eager" />
+        <div className="absolute top-4 left-4 bg-[#1A5C33] px-3 py-1 z-20">
+          <span className="text-[10px] text-white font-black uppercase tracking-widest">{fase}</span>
         </div>
       </div>
-      <div className="p-6">
-        <h4 className="text-white font-display text-xl mb-1 tracking-tight uppercase">{ciudad}</h4>
-        <p className="text-[#8a9a8b] text-xs mb-4 uppercase tracking-wider">{proyecto}</p>
-        <div className="space-y-2">
-          <div className="flex justify-between items-end">
-            <span className="text-[10px] text-[#8a9a8b] uppercase tracking-tighter">Progreso</span>
-            <span className="text-white font-display text-lg">{porcentaje}%</span>
-          </div>
-          <div className="h-1 bg-white/5 w-full">
-            <div className="h-full bg-[#1A5C33] transition-all duration-1000" style={{ width: `${porcentaje}%` }} />
-          </div>
+      <div className="p-8">
+        <h4 className="text-[#1A5C33] text-3xl mb-1 font-black uppercase tracking-tighter">{ciudad}</h4>
+        <p className="text-zinc-500 text-xs mb-6 uppercase font-bold tracking-widest">{proyecto}</p>
+        <div className="flex justify-between items-end mb-3">
+          <span className="text-[10px] text-zinc-400 uppercase font-black">Avance de Obra</span>
+          <span className="text-[#1A5C33] text-2xl font-black">{porcentaje}%</span>
+        </div>
+        <div className="h-3 bg-zinc-100 w-full rounded-full overflow-hidden border border-zinc-200">
+          <div className="h-full bg-[#1A5C33]" style={{ width: `${porcentaje}%` }} />
         </div>
       </div>
     </div>
@@ -54,7 +46,6 @@ export default function Home() {
   const [mounted, setMounted] = useState(false);
   const [statsVisible, setStatsVisible] = useState(false);
   const statsRef = useRef(null);
-
   const years = useCounter(17, 2500, statsVisible);
   const properties = useCounter(300, 2500, statsVisible);
   const influence = useCounter(89, 2500, statsVisible);
@@ -64,62 +55,47 @@ export default function Home() {
     const observer = new IntersectionObserver(([entry]) => { 
       if (entry.isIntersecting) setStatsVisible(true); 
     }, { threshold: 0.1 });
-    
     if (statsRef.current) observer.observe(statsRef.current);
     return () => observer.disconnect();
   }, []);
 
-  if (!mounted) return <div className="min-h-screen bg-[#060d07]" />;
+  if (!mounted) return <div className="min-h-screen bg-white" />;
 
   return (
-    <main className="relative min-h-screen bg-[#060d07] text-white font-sans">
-      {/* HERO SECTION */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden bg-black">
-        <div className="absolute inset-0 z-0">
-          <img
-            src="/images/hero-obra.jpg"
-            alt="Infraestructura Mercahorro"
-            className="absolute inset-0 w-full h-full object-cover"
-            style={{ filter: "brightness(0.65) contrast(1.1)" }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#060d07] via-transparent to-transparent opacity-80"></div>
-        </div>
-        <div className="container mx-auto px-6 relative z-10 text-center">
-          <h1 className="font-display text-6xl md:text-8xl font-black mb-6 tracking-tighter uppercase leading-none">
-            CONSTRUIMOS <br /> <span className="text-[#1A5C33]">EL ABASTO</span>
-          </h1>
-          <p className="text-[#c0cfc1] max-w-2xl mx-auto text-lg font-light mb-10">
-            Desarrollador inmobiliario especializado en la red logística agroalimentaria del norte de México.
-          </p>
+    <main className="min-h-screen bg-white text-zinc-900">
+      {/* HERO - MANTENIDO POR ÉXITO VISUAL */}
+      <section className="relative h-screen flex items-center justify-center bg-black overflow-hidden">
+        <img src="/images/hero-obra.jpg" alt="Hero" className="absolute inset-0 w-full h-full object-cover opacity-90" style={{ filter: "brightness(0.9) contrast(1.1)" }} />
+        <div className="absolute inset-0 bg-black/30" />
+        <div className="relative z-20 text-center px-6">
+          <h1 className="text-white text-6xl md:text-9xl font-black uppercase leading-none drop-shadow-2xl">CONSTRUIMOS <br /><span className="text-[#2fa159]">EL ABASTO</span></h1>
+          <p className="text-white bg-[#1A5C33] inline-block px-8 py-3 mt-8 rounded-full text-lg font-bold uppercase tracking-widest">Líderes en Red Logística</p>
         </div>
       </section>
 
-      {/* STATS SECTION */}
-      <section ref={statsRef} className="py-24 bg-[#0a140c] border-y border-[#1A5C33]/20">
-        <div className="container mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
-          <div>
-            <span className="text-6xl font-display font-black text-white">{years}</span>
-            <p className="text-[#8a9a8b] text-xs uppercase tracking-[0.2em] mt-2">Años de Trayectoria</p>
-          </div>
-          <div>
-            <span className="text-6xl font-display font-black text-white">+{properties}</span>
-            <p className="text-[#8a9a8b] text-xs uppercase tracking-[0.2em] mt-2">Propiedades</p>
-          </div>
-          <div>
-            <span className="text-6xl font-display font-black text-white">{influence}</span>
-            <p className="text-[#8a9a8b] text-xs uppercase tracking-[0.2em] mt-2">Puntos de Influencia</p>
-          </div>
+      {/* STATS - FONDO CLARO PARA VISIBILIDAD TOTAL */}
+      <section ref={statsRef} className="py-40 bg-zinc-50 border-y border-zinc-200">
+        <div className="container mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-20 text-center">
+          {[ [years, "Años de Éxito"], [properties, "Propiedades"], [influence, "Puntos de Red"] ].map(([val, label]) => (
+            <div key={label} className="flex flex-col items-center">
+              <span className="text-9xl font-black text-[#1A5C33] tracking-tighter leading-none">
+                {label === "Propiedades" ? `+${val}` : val}
+              </span>
+              <div className="h-1.5 w-24 bg-[#2fa159] my-8" />
+              <p className="text-zinc-500 text-sm uppercase tracking-[0.4em] font-black">{label}</p>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* BITÁCORA SECTION */}
-      <section className="py-32 bg-[#060d07]">
+      {/* BITÁCORA - DISEÑO LIMPIO */}
+      <section className="py-40 bg-white">
         <div className="container mx-auto px-6">
-          <div className="flex items-center gap-4 mb-16">
-            <div className="h-[2px] w-12 bg-[#1A5C33]"></div>
-            <h2 className="font-display text-4xl font-black uppercase tracking-tight">Bitácora de Desarrollo</h2>
+          <div className="flex items-center gap-8 mb-24">
+            <div className="h-2 w-32 bg-[#1A5C33]" />
+            <h2 className="text-[#1A5C33] text-6xl font-black uppercase tracking-tighter">Bitácora</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
             <ObraCard ciudad="Monterrey" proyecto="Abastos Estrella" porcentaje={72} fase="Estructura" imageSrc="/images/obra-monterrey.jpg" />
             <ObraCard ciudad="Torreón" proyecto="Mercahorro Central" porcentaje={88} fase="Acabados" imageSrc="/images/obra-torreon.jpg" />
             <ObraCard ciudad="Gómez Palacio" proyecto="Plaza Abastos" porcentaje={45} fase="Cimentación" imageSrc="/images/obra-gomez-palacio.jpg" />
@@ -127,11 +103,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FOOTER SIMPLE */}
-      <footer className="py-12 bg-[#050a06] border-t border-white/5 text-center">
-        <p className="text-[#4a5a4b] text-[10px] uppercase tracking-[0.3em]">
-          © 2026 Grupo Mercahorro • Infraestructura Agroalimentaria
-        </p>
+      <footer className="py-20 bg-zinc-100 border-t border-zinc-200 text-center">
+        <p className="text-zinc-400 text-xs font-black uppercase tracking-[1em]">Grupo Mercahorro 2026</p>
       </footer>
     </main>
   );
