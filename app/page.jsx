@@ -266,7 +266,13 @@ const PROYECTOS = [
     proyecto: "Mercahorro Torreón",
     pct: 100, fase: "Plaza mayorista en operación continua",
     img: "/images/obra-torreon.jpg", status: "operando",
-    fotos: ["/images/obra-torreon.jpg"],
+    fotos: [
+      "/images/obra-torreon.jpg",
+      "/images/bitacora/torreon-01.jpg",
+      "/images/bitacora/torreon-02.jpg",
+      "/images/bitacora/torreon-03.jpg",
+      "/images/bitacora/torreon-04.jpg",
+    ],
   },
   {
     ciudad: "Gómez Palacio", estado: "Dgo.",
