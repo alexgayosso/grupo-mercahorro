@@ -553,18 +553,16 @@ export default function MercahorroPage() {
               display: "flex", flexDirection: "column",
             }}>
               <div style={{
-                background: "#111", borderRadius: 8, padding: "10px 16px",
-                marginBottom: 20, display: "flex", alignItems: "center", justifyContent: "center",
+                background: "#f9fafb", borderRadius: 8,
+                padding: "16px 24px", marginBottom: 20,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                height: 90,
               }}>
-                <img
-                  src="/images/logo-mercahorro.png"
-                  alt="Grupo Mercahorro"
-                  style={{ height: 40, width: "auto", objectFit: "contain", display: "block" }}
-                  onError={e => { e.currentTarget.parentNode.style.background = "#1A5C33"; e.currentTarget.style.display = "none"; }}
-                />
+                <img src="/images/logo-mercahorro.png" alt="Grupo Mercahorro"
+                  style={{ maxHeight: 58, maxWidth: "100%", objectFit: "contain", display: "block" }} />
               </div>
               <h3 style={{ margin: "0 0 10px", fontSize: 18, fontWeight: 800, color: "#111" }}>Grupo Mercahorro</h3>
-              <p style={{ margin: "0", fontSize: 14, color: "#6b7280", lineHeight: 1.7, flex: 1 }}>
+              <p style={{ margin: 0, fontSize: 14, color: "#6b7280", lineHeight: 1.7, flex: 1 }}>
                 Desarrollador de infraestructura de abasto mayorista. Marcas Mercahorro y Plaza Abastos en operación en Torreón, Gómez Palacio y Monterrey.
               </p>
             </div>
@@ -577,22 +575,20 @@ export default function MercahorroPage() {
               display: "flex", flexDirection: "column",
             }}>
               <div style={{
-                background: "#fff", border: "1px solid #e5e7eb", borderRadius: 8, padding: "10px 16px",
-                marginBottom: 20, display: "flex", alignItems: "center", justifyContent: "center",
+                background: "#f9fafb", borderRadius: 8,
+                padding: "16px 24px", marginBottom: 20,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                height: 90,
               }}>
-                <img
-                  src="/images/logo-merca-mexico.png"
-                  alt="Merca México"
-                  style={{ height: 48, width: "auto", objectFit: "contain", display: "block" }}
-                  onError={e => { e.currentTarget.parentNode.style.background = "#3D1C02"; e.currentTarget.style.display = "none"; }}
-                />
+                <img src="/images/logo-merca-mexico.png" alt="Merca México"
+                  style={{ maxHeight: 58, maxWidth: "100%", objectFit: "contain", display: "block" }} />
               </div>
               <h3 style={{ margin: "0 0 10px", fontSize: 18, fontWeight: 800, color: "#111" }}>Merca México</h3>
               <p style={{ margin: "0 0 16px", fontSize: 14, color: "#6b7280", lineHeight: 1.7, flex: 1 }}>
                 Órgano validador del Registro de Activos Verificados (RAV). Certifica autenticidad y estado operativo de cada propiedad dentro del ecosistema.
               </p>
               <a href="https://mercamexico.mx" target="_blank" rel="noopener noreferrer"
-                style={{ fontSize: 13, fontWeight: 700, color: "#3D1C02", textDecoration: "none", letterSpacing: "0.05em" }}>
+                style={{ fontSize: 13, fontWeight: 700, color: "#3D1C02", textDecoration: "none" }}>
                 mercamexico.mx →
               </a>
             </div>
@@ -605,22 +601,20 @@ export default function MercahorroPage() {
               display: "flex", flexDirection: "column",
             }}>
               <div style={{
-                borderRadius: 8, overflow: "hidden",
-                marginBottom: 20,
+                background: "#f9fafb", borderRadius: 8,
+                padding: "16px 24px", marginBottom: 20,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                height: 90,
               }}>
-                <img
-                  src="/images/logo-merca-capital.png"
-                  alt="Merca Capital"
-                  style={{ width: "100%", height: 68, objectFit: "cover", objectPosition: "center", display: "block" }}
-                  onError={e => { e.currentTarget.style.display = "none"; }}
-                />
+                <img src="/images/logo-merca-capital.png" alt="Merca Capital"
+                  style={{ maxHeight: 58, maxWidth: "100%", objectFit: "contain", display: "block" }} />
               </div>
               <h3 style={{ margin: "0 0 10px", fontSize: 18, fontWeight: 800, color: "#111" }}>Merca Capital</h3>
               <p style={{ margin: "0 0 16px", fontSize: 14, color: "#6b7280", lineHeight: 1.7, flex: 1 }}>
                 Gestión institucional de inversión. Fondo SAPI con objetivo de 100 millones USD. Para inversores calificados con visión patrimonial de largo plazo.
               </p>
               <a href="https://mercacapital.mx" target="_blank" rel="noopener noreferrer"
-                style={{ fontSize: 13, fontWeight: 700, color: "#9B1C1C", textDecoration: "none", letterSpacing: "0.05em" }}>
+                style={{ fontSize: 13, fontWeight: 700, color: "#9B1C1C", textDecoration: "none" }}>
                 mercacapital.mx →
               </a>
             </div>
