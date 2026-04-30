@@ -191,7 +191,7 @@ export default function MercahorroPage() {
       <nav style={{
         position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
         background: "#fff", borderBottom: "2px solid #1A5C33",
-        height: 60, display: "flex", alignItems: "center",
+        height: 72, display: "flex", alignItems: "center",
       }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px", width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           {/* Logo oficial */}
@@ -199,7 +199,7 @@ export default function MercahorroPage() {
             <img
               src="/images/logo-mercahorro.png"
               alt="Grupo Mercahorro — Construimos el Abasto"
-              style={{ height: 44, width: "auto", display: "block", objectFit: "contain" }}
+              style={{ height: 58, width: "auto", display: "block", objectFit: "contain" }}
               onError={e => {
                 e.currentTarget.style.display = "none";
                 e.currentTarget.nextSibling.style.display = "flex";
@@ -258,7 +258,7 @@ export default function MercahorroPage() {
         {/* Mobile menu */}
         {menuOpen && (
           <div style={{
-            position: "absolute", top: 60, left: 0, right: 0,
+            position: "absolute", top: 72, left: 0, right: 0,
             background: "#fff", borderBottom: "2px solid #1A5C33",
             padding: "16px 24px", display: "flex", flexDirection: "column", gap: 16,
           }}>
@@ -281,7 +281,7 @@ export default function MercahorroPage() {
       </nav>
 
       {/* ══ HERO ══ */}
-      <section style={{ position: "relative", minHeight: "100vh", display: "flex", alignItems: "center", paddingTop: 60 }}>
+      <section style={{ position: "relative", minHeight: "100vh", display: "flex", alignItems: "center", paddingTop: 72 }}>
         {/* Imagen de fondo */}
         <div style={{ position: "absolute", inset: 0, zIndex: 0, background: "#0d2016", overflow: "hidden" }}>
           <img
@@ -595,17 +595,19 @@ export default function MercahorroPage() {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 40 }}>
             {/* Marca */}
             <div>
-              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-                <div style={{ width: 40, height: 40, background: "#1A5C33", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                  <span style={{ color: "#fff", fontWeight: 900, fontSize: 18 }}>M</span>
-                </div>
-                <div>
-                  <div style={{ fontWeight: 900, fontSize: 14, color: "#fff", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                    Grupo Mercahorro
-                  </div>
-                  <div style={{ fontSize: 10, color: "#6b7280", letterSpacing: "0.15em", textTransform: "uppercase" }}>
-                    La estructura que sostiene el comercio
-                  </div>
+              <div style={{ marginBottom: 16 }}>
+                <img
+                  src="/images/logo-mercahorro-blanco.png"
+                  alt="Grupo Mercahorro"
+                  style={{ height: 56, width: "auto", display: "block", objectFit: "contain" }}
+                  onError={e => {
+                    e.currentTarget.style.display = "none";
+                    e.currentTarget.nextSibling.style.display = "block";
+                  }}
+                />
+                {/* Fallback texto si no carga el logo blanco */}
+                <div style={{ display: "none", fontWeight: 900, fontSize: 16, color: "#fff", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                  Grupo Mercahorro
                 </div>
               </div>
               <p style={{ margin: 0, fontSize: 13, color: "#9ca3af", lineHeight: 1.7 }}>
