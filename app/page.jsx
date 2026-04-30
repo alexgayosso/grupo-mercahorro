@@ -48,74 +48,47 @@ function ProgressBar({ pct }) {
 }
 
 /* ─── OBRA CARD ─── */
-function ObraCard({ ciudad, estado, proyecto, pct, fase, img }) {
+// status: "en-obra" | "operando" | "por-iniciar"
+function ObraCard({ ciudad, estado, proyecto, pct, fase, img, status = "en-obra" }) {
+  const badge = {
+    "en-obra":    { label: "En Obra",        bg: "#9B1C1C" },
+    "operando":   { label: "Operando",        bg: "#1A5C33" },
+    "por-iniciar":{ label: "Obra por Iniciar",bg: "#3D1C02" },
+  }[status];
+
+  const showBar = status !== "por-iniciar";
+
   return (
-    <div
-      style={{
-        background: "#fff",
-        border: "1px solid #d1d5db",
-        borderRadius: 12,
-        overflow: "hidden",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
+    <div style={{
+      background: "#fff", border: "1px solid #d1d5db",
+      borderRadius: 12, overflow: "hidden",
+      display: "flex", flexDirection: "column",
+    }}>
       {/* Imagen */}
-      <div
-        style={{
-          position: "relative",
-          height: 180,
-          background: "#1A5C33",
-          overflow: "hidden",
-          flexShrink: 0,
-        }}
-      >
-        <img
-          src={img}
-          alt={`Avance ${ciudad}`}
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            display: "block",
-          }}
-          onError={(e) => { e.currentTarget.style.display = "none"; }}
-        />
-        {/* Badge estado */}
-        <div
-          style={{
-            position: "absolute",
-            top: 10,
-            left: 10,
-            background: "#9B1C1C",
-            color: "#fff",
-            fontSize: 10,
-            fontWeight: 700,
-            letterSpacing: "0.15em",
-            textTransform: "uppercase",
-            padding: "3px 10px",
-            borderRadius: 4,
-          }}
-        >
-          En Obra
+      <div style={{ position: "relative", height: 180, background: "#1A5C33", overflow: "hidden", flexShrink: 0 }}>
+        <img src={img} alt={`Avance ${ciudad}`}
+          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+          onError={e => { e.currentTarget.style.display = "none"; }} />
+        {/* Badge status */}
+        <div style={{
+          position: "absolute", top: 10, left: 10,
+          background: badge.bg, color: "#fff",
+          fontSize: 10, fontWeight: 700, letterSpacing: "0.15em",
+          textTransform: "uppercase", padding: "3px 10px", borderRadius: 4,
+        }}>
+          {badge.label}
         </div>
-        {/* Porcentaje superpuesto */}
-        <div
-          style={{
-            position: "absolute",
-            bottom: 10,
-            right: 10,
-            background: "rgba(0,0,0,0.75)",
-            color: "#fff",
-            fontSize: 22,
-            fontWeight: 900,
-            padding: "4px 12px",
-            borderRadius: 6,
-            fontVariantNumeric: "tabular-nums",
-          }}
-        >
-          {pct}%
-        </div>
+        {/* Porcentaje — solo si aplica */}
+        {status !== "por-iniciar" && (
+          <div style={{
+            position: "absolute", bottom: 10, right: 10,
+            background: "rgba(0,0,0,0.75)", color: "#fff",
+            fontSize: 22, fontWeight: 900, padding: "4px 12px",
+            borderRadius: 6, fontVariantNumeric: "tabular-nums",
+          }}>
+            {pct}%
+          </div>
+        )}
       </div>
 
       {/* Contenido */}
@@ -129,13 +102,15 @@ function ObraCard({ ciudad, estado, proyecto, pct, fase, img }) {
           </h3>
         </div>
         <p style={{ margin: 0, fontSize: 13, color: "#6b7280" }}>{fase}</p>
-        <div>
-          <ProgressBar pct={pct} />
-          <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6 }}>
-            <span style={{ fontSize: 12, color: "#6b7280" }}>Avance físico</span>
-            <span style={{ fontSize: 13, fontWeight: 700, color: "#1A5C33" }}>{pct}%</span>
+        {showBar && (
+          <div>
+            <ProgressBar pct={pct} />
+            <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6 }}>
+              <span style={{ fontSize: 12, color: "#6b7280" }}>Avance físico</span>
+              <span style={{ fontSize: 13, fontWeight: 700, color: "#1A5C33" }}>{pct}%</span>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
@@ -419,25 +394,42 @@ export default function MercahorroPage() {
             </a>
           </div>
 
-          {/* Grid de tarjetas */}
+          {/* Grid de tarjetas — 3 columnas desktop, 1 mobile */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24 }}>
             <ObraCard
               ciudad="Monterrey" estado="N.L."
-              proyecto="Mercahorro Monterrey Fase II"
+              proyecto="Mercahorro Monterrey"
               pct={72} fase="Estructura — Nivel 3 completado"
               img="/images/obra-monterrey.jpg"
+              status="en-obra"
             />
             <ObraCard
               ciudad="Torreón" estado="Coah."
-              proyecto="Plaza Abastos Torreón Ampliación"
-              pct={88} fase="Acabados — Instalaciones en proceso"
+              proyecto="Mercahorro Torreón"
+              pct={100} fase="Plaza mayorista en operación continua"
               img="/images/obra-torreon.jpg"
+              status="operando"
             />
             <ObraCard
               ciudad="Gómez Palacio" estado="Dgo."
               proyecto="Mercahorro Gómez Palacio"
-              pct={45} fase="Cimentación — Primera etapa"
+              pct={70} fase="Estructura — Segunda etapa en proceso"
               img="/images/obra-gomez-palacio.jpg"
+              status="en-obra"
+            />
+            <ObraCard
+              ciudad="Torreón" estado="Coah."
+              proyecto="Plaza Abastos Torreón"
+              pct={100} fase="Centro comercial de abasto en operación"
+              img="/images/obra-plaza-abastos-torreon.jpg"
+              status="operando"
+            />
+            <ObraCard
+              ciudad="Silao" estado="Gto."
+              proyecto="Mercahorro Silao"
+              pct={0} fase="Gestión de permisos — Inicio de obra programado"
+              img="/images/obra-silao-render.jpg"
+              status="por-iniciar"
             />
           </div>
         </div>
