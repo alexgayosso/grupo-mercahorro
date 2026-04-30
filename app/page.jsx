@@ -194,24 +194,28 @@ export default function MercahorroPage() {
         height: 60, display: "flex", alignItems: "center",
       }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px", width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          {/* Logo */}
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <div style={{
-              width: 36, height: 36, background: "#1A5C33",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              borderRadius: 6, flexShrink: 0,
-            }}>
-              <span style={{ color: "#fff", fontWeight: 900, fontSize: 18 }}>M</span>
-            </div>
-            <div>
-              <div style={{ fontWeight: 900, fontSize: 15, color: "#111", letterSpacing: "0.05em", textTransform: "uppercase", lineHeight: 1.1 }}>
-                Grupo Mercahorro
+          {/* Logo oficial */}
+          <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none", flexShrink: 0 }}>
+            <img
+              src="/images/logo-mercahorro.png"
+              alt="Grupo Mercahorro — Construimos el Abasto"
+              style={{ height: 44, width: "auto", display: "block", objectFit: "contain" }}
+              onError={e => {
+                e.currentTarget.style.display = "none";
+                e.currentTarget.nextSibling.style.display = "flex";
+              }}
+            />
+            {/* Fallback si la imagen no carga */}
+            <div style={{ display: "none", alignItems: "center", gap: 10 }}>
+              <div style={{ width: 36, height: 36, background: "#1A5C33", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: 6 }}>
+                <span style={{ color: "#fff", fontWeight: 900, fontSize: 18 }}>M</span>
               </div>
-              <div style={{ fontSize: 10, color: "#6b7280", letterSpacing: "0.15em", textTransform: "uppercase" }}>
-                Infraestructura de Abasto
+              <div>
+                <div style={{ fontWeight: 900, fontSize: 15, color: "#111", letterSpacing: "0.05em", textTransform: "uppercase" }}>Grupo Mercahorro</div>
+                <div style={{ fontSize: 10, color: "#6b7280", letterSpacing: "0.15em", textTransform: "uppercase" }}>Infraestructura de Abasto</div>
               </div>
             </div>
-          </div>
+          </a>
 
           {/* Nav links — desktop */}
           <div style={{ display: "flex", gap: 28, alignItems: "center" }} className="nav-desktop">
@@ -283,11 +287,11 @@ export default function MercahorroPage() {
           <img
             src="/images/hero-obra.jpg"
             alt="Obra en construcción Mercahorro"
-            style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.45, display: "block" }}
+            style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.80, display: "block" }}
             onError={e => { e.currentTarget.style.display = "none"; }}
           />
-          {/* Overlay sólido — sin filtros */}
-          <div style={{ position: "absolute", inset: 0, background: "rgba(6,20,9,0.62)" }} />
+          {/* Overlay sólido — sin filtros — más ligero para ver la imagen */}
+          <div style={{ position: "absolute", inset: 0, background: "rgba(6,20,9,0.42)" }} />
         </div>
 
         {/* Contenido Hero */}
