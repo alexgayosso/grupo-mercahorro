@@ -548,19 +548,18 @@ export default function MercahorroPage() {
             {/* ── Grupo Mercahorro ── */}
             <div style={{
               background: "#fff", border: "1px solid #e5e7eb",
-              borderRadius: 12, padding: "28px 24px",
+              borderRadius: 12, padding: "24px 24px",
               borderTop: "4px solid #1A5C33",
               display: "flex", flexDirection: "column",
             }}>
               <div style={{
-                background: "#111", borderRadius: 10, padding: "16px 20px",
+                background: "#111", borderRadius: 8, padding: "10px 16px",
                 marginBottom: 20, display: "flex", alignItems: "center", justifyContent: "center",
-                minHeight: 80,
               }}>
                 <img
                   src="/images/logo-mercahorro.png"
                   alt="Grupo Mercahorro"
-                  style={{ height: 52, width: "auto", objectFit: "contain", display: "block" }}
+                  style={{ height: 40, width: "auto", objectFit: "contain", display: "block" }}
                   onError={e => { e.currentTarget.parentNode.style.background = "#1A5C33"; e.currentTarget.style.display = "none"; }}
                 />
               </div>
@@ -573,19 +572,18 @@ export default function MercahorroPage() {
             {/* ── Merca México ── */}
             <div style={{
               background: "#fff", border: "1px solid #e5e7eb",
-              borderRadius: 12, padding: "28px 24px",
+              borderRadius: 12, padding: "24px 24px",
               borderTop: "4px solid #3D1C02",
               display: "flex", flexDirection: "column",
             }}>
               <div style={{
-                background: "#fff", border: "1px solid #e5e7eb", borderRadius: 10, padding: "12px 20px",
+                background: "#fff", border: "1px solid #e5e7eb", borderRadius: 8, padding: "10px 16px",
                 marginBottom: 20, display: "flex", alignItems: "center", justifyContent: "center",
-                minHeight: 80,
               }}>
                 <img
                   src="/images/logo-merca-mexico.png"
                   alt="Merca México"
-                  style={{ height: 60, width: "auto", objectFit: "contain", display: "block" }}
+                  style={{ height: 48, width: "auto", objectFit: "contain", display: "block" }}
                   onError={e => { e.currentTarget.parentNode.style.background = "#3D1C02"; e.currentTarget.style.display = "none"; }}
                 />
               </div>
@@ -602,19 +600,18 @@ export default function MercahorroPage() {
             {/* ── Merca Capital ── */}
             <div style={{
               background: "#fff", border: "1px solid #e5e7eb",
-              borderRadius: 12, padding: "28px 24px",
+              borderRadius: 12, padding: "24px 24px",
               borderTop: "4px solid #9B1C1C",
               display: "flex", flexDirection: "column",
             }}>
               <div style={{
-                background: "#0d1b3e", borderRadius: 10, padding: "12px 20px",
-                marginBottom: 20, display: "flex", alignItems: "center", justifyContent: "center",
-                minHeight: 80,
+                borderRadius: 8, overflow: "hidden",
+                marginBottom: 20,
               }}>
                 <img
                   src="/images/logo-merca-capital.png"
                   alt="Merca Capital"
-                  style={{ height: 60, width: "auto", objectFit: "contain", display: "block" }}
+                  style={{ width: "100%", height: 68, objectFit: "cover", objectPosition: "center", display: "block" }}
                   onError={e => { e.currentTarget.style.display = "none"; }}
                 />
               </div>
