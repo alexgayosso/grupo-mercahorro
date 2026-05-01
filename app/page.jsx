@@ -370,11 +370,11 @@ export default function MercahorroPage() {
       {modalData && <Modal data={modalData} onClose={() => setModalData(null)} />}
 
       {/* ══ NAV ══ */}
-      <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, background: "#fff", borderBottom: "2px solid #1A5C33", height: 72, display: "flex", alignItems: "center" }}>
+      <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, backgroundColor: "#ffffff", borderBottom: "2px solid #1A5C33", height: 80, display: "flex", alignItems: "center" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px", width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none", flexShrink: 0 }}>
             <img src="/images/logo-mercahorro.png" alt="Grupo Mercahorro"
-              style={{ height: 58, width: "auto", display: "block" }}
+              style={{ height: 65, width: "auto", display: "block", padding: "5px 0" }}
               onError={(e) => { e.currentTarget.style.display = "none"; e.currentTarget.nextSibling.style.display = "flex"; }} />
             <div style={{ display: "none", alignItems: "center", gap: 10 }}>
               <div style={{ width: 36, height: 36, background: "#1A5C33", borderRadius: 6, display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -422,7 +422,7 @@ export default function MercahorroPage() {
         </div>
 
         {menuOpen && (
-          <div style={{ position: "absolute", top: 72, left: 0, right: 0, background: "#fff", borderBottom: "2px solid #1A5C33", padding: "20px 24px", display: "flex", flexDirection: "column", gap: 18, zIndex: 200 }}>
+          <div style={{ position: "absolute", top: 80, left: 0, right: 0, backgroundColor: "#ffffff", borderBottom: "2px solid #1A5C33", padding: "20px 24px", display: "flex", flexDirection: "column", gap: 18, zIndex: 200 }}>
             {[
               { label: "Proyectos", href: "#proyectos" },
               { label: "Inversión", href: "#inversion" },
@@ -444,7 +444,7 @@ export default function MercahorroPage() {
       </nav>
 
       {/* ══ HERO ══ */}
-      <section style={{ position: "relative", minHeight: "100vh", display: "flex", alignItems: "center", paddingTop: 72 }}>
+      <section style={{ position: "relative", minHeight: "100vh", display: "flex", alignItems: "center", paddingTop: 80 }}>
         <div style={{ position: "absolute", inset: 0, zIndex: 0, background: "#0d2016", overflow: "hidden" }}>
           <img src="/images/hero-obra.jpg" alt="Mercahorro — El comercio que genera patrimonio"
             style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.80, display: "block" }}
