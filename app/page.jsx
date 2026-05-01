@@ -374,7 +374,7 @@ export default function MercahorroPage() {
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px", width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none", flexShrink: 0 }}>
             <img src="/images/logo-mercahorro.png" alt="Grupo Mercahorro"
-              style={{ height: 65, width: "auto", display: "block", padding: "5px 0" }}
+              style={{ height: 72, width: "auto", display: "block", padding: "4px 0" }}
               onError={(e) => { e.currentTarget.style.display = "none"; e.currentTarget.nextSibling.style.display = "flex"; }} />
             <div style={{ display: "none", alignItems: "center", gap: 10 }}>
               <div style={{ width: 36, height: 36, background: "#1A5C33", borderRadius: 6, display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -744,13 +744,14 @@ export default function MercahorroPage() {
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24 }}>
             {[
-              { key: "mercahorro", img: "/images/logo-mercahorro.png",    bg: "#f9fafb", title: "Grupo Mercahorro", accent: "#1A5C33", link: null, linkLabel: null,           desc: "Desarrollador de infraestructura de abasto mayorista. Marcas Mercahorro y Plaza Abastos en Torreón, Gómez Palacio y Monterrey." },
-              { key: "mexico",     img: "/images/logo-merca-mexico.png",  bg: "#fff",    title: "Merca México",     accent: "#3D1C02", link: "https://mercamexico.mx",  linkLabel: "mercamexico.mx →",  desc: "Órgano validador del Registro de Activos Verificados (RAV). Certifica autenticidad y estado operativo de cada propiedad." },
-              { key: "capital",    img: "/images/logo-merca-capital.png", bg: "#f9fafb", title: "Merca Capital",    accent: "#9B1C1C", link: "https://mercacapital.mx", linkLabel: "mercacapital.mx →", desc: "Gestión institucional de inversión. Fondo SAPI con objetivo de 100 millones USD. Para inversores calificados con visión patrimonial." },
-            ].map(({ key, img, bg, title, accent, link, linkLabel, desc }) => (
+              { key: "mercahorro", img: "/images/logo-mercahorro.png",    title: "Grupo Mercahorro", accent: "#1A5C33", link: null, linkLabel: null,           desc: "Desarrollador de infraestructura de abasto mayorista. Marcas Mercahorro y Plaza Abastos en Torreón, Gómez Palacio y Monterrey." },
+              { key: "mexico",     img: "/images/logo-merca-mexico.png",  title: "Merca México",     accent: "#3D1C02", link: "https://mercamexico.mx",  linkLabel: "mercamexico.mx →",  desc: "Órgano validador del Registro de Activos Verificados (RAV). Certifica autenticidad y estado operativo de cada propiedad." },
+              { key: "capital",    img: "/images/logo-merca-capital.png", title: "Merca Capital",    accent: "#9B1C1C", link: "https://mercacapital.mx", linkLabel: "mercacapital.mx →", desc: "Gestión institucional de inversión. Fondo SAPI con objetivo de 100 millones USD. Para inversores calificados con visión patrimonial." },
+            ].map(({ key, img, title, accent, link, linkLabel, desc }) => (
               <div key={key} style={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: 12, padding: "28px", borderTop: `4px solid ${accent}`, display: "flex", flexDirection: "column" }}>
-                <div style={{ background: bg, borderRadius: 8, padding: "16px 24px", marginBottom: 20, display: "flex", alignItems: "center", justifyContent: "center", height: 90, border: bg === "#fff" ? "1px solid #e5e7eb" : "none" }}>
-                  <img src={img} alt={title} style={{ maxHeight: 58, maxWidth: "100%", objectFit: "contain", display: "block" }} />
+                {/* Contenedor de logo sin fondo, altura fija para alinear los 3 */}
+                <div style={{ height: 80, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>
+                  <img src={img} alt={title} style={{ maxHeight: "100%", maxWidth: "100%", objectFit: "contain", display: "block" }} />
                 </div>
                 <h3 style={{ margin: "0 0 10px", fontSize: 18, fontWeight: 800, color: "#111" }}>{title}</h3>
                 <p style={{ margin: "0 0 16px", fontSize: 14, color: "#6b7280", lineHeight: 1.7, flex: 1 }}>{desc}</p>
