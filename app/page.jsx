@@ -372,9 +372,9 @@ export default function MercahorroPage() {
       {/* ══ NAV ══ */}
       <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, backgroundColor: "#ffffff", borderBottom: "2px solid #1A5C33", height: 80, display: "flex", alignItems: "center" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px", width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none", flexShrink: 0, background: "#fff", padding: "4px 8px 4px 0" }}>
+          <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none", flexShrink: 0, background: "#fff" }}>
             <img src="/images/logo-mercahorro.png" alt="Grupo Mercahorro"
-              style={{ height: 72, width: "auto", display: "block" }}
+              style={{ height: 60, width: "auto", display: "block" }}
               onError={(e) => { e.currentTarget.style.display = "none"; e.currentTarget.nextSibling.style.display = "flex"; }} />
             <div style={{ display: "none", alignItems: "center", gap: 10 }}>
               <div style={{ width: 36, height: 36, background: "#1A5C33", borderRadius: 6, display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -746,7 +746,7 @@ export default function MercahorroPage() {
             {[
               { key: "mercahorro", img: "/images/logo-mercahorro.png",    title: "Grupo Mercahorro", accent: "#1A5C33", link: null, linkLabel: null,           desc: "Desarrollador de infraestructura de abasto mayorista. Marcas Mercahorro y Plaza Abastos en Torreón, Gómez Palacio y Monterrey.", maxH: 70 },
               { key: "mexico",     img: "/images/logo-merca-mexico.png",  title: "Merca México",     accent: "#3D1C02", link: "https://mercamexico.mx",  linkLabel: "mercamexico.mx →",  desc: "Órgano validador del Registro de Activos Verificados (RAV). Certifica autenticidad y estado operativo de cada propiedad.", maxH: 75 },
-              { key: "capital",    img: "/images/logo-merca-capital.png", title: "Merca Capital",    accent: "#9B1C1C", link: "https://mercacapital.mx", linkLabel: "mercacapital.mx →", desc: "Gestión institucional de inversión. Fondo SAPI con objetivo de 100 millones USD. Para inversores calificados con visión patrimonial.", maxH: 52 },
+              { key: "capital",    img: "/images/logo-merca-capital.png", title: "Merca Capital",    accent: "#9B1C1C", link: "https://mercacapital.mx", linkLabel: "mercacapital.mx →", desc: "Gestión institucional de inversión. Fondo SAPI con objetivo de 100 millones USD. Para inversores calificados con visión patrimonial.", maxH: 75 },
             ].map(({ key, img, title, accent, link, linkLabel, desc, maxH }) => (
               <div key={key} style={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: 12, padding: "28px", borderTop: `4px solid ${accent}`, display: "flex", flexDirection: "column" }}>
                 <div style={{ height: 90, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 20, background: "#fff" }}>
