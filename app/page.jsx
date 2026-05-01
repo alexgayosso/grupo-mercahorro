@@ -346,7 +346,7 @@ export default function MercahorroPage() {
   const [modalData, setModalData] = useState(null);
   const statsRef = useRef(null);
 
-  const anos   = useCounter(17,  1600, statsOn);
+  const anos   = useCounter(19,  1600, statsOn);
   const props  = useCounter(300, 2000, statsOn);
   const puntos = useCounter(89,  1800, statsOn);
 
@@ -773,7 +773,7 @@ export default function MercahorroPage() {
                 <div style={{ display: "none", fontWeight: 900, fontSize: 16, color: "#fff", textTransform: "uppercase" }}>Grupo Mercahorro</div>
               </div>
               <p style={{ margin: "0 0 16px", fontSize: 13, color: "#9ca3af", lineHeight: 1.7 }}>
-                Infraestructura de abasto mayorista en el norte de México. 17 años de operación ininterrumpida.
+                Infraestructura de abasto mayorista en el norte de México. 19 años de operación ininterrumpida.
               </p>
               <a href="https://mercacapital.mx" target="_blank" rel="noopener noreferrer"
                 style={{ fontSize: 12, color: "#6b7280", textDecoration: "none", borderBottom: "1px solid rgba(255,255,255,0.15)", paddingBottom: 2, display: "inline-block" }}
