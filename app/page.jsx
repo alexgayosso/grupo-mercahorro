@@ -446,10 +446,11 @@ export default function MercahorroPage() {
       {/* ══ HERO ══ */}
       <section style={{ position: "relative", minHeight: "100vh", display: "flex", alignItems: "center", paddingTop: 80 }}>
         <div style={{ position: "absolute", inset: 0, zIndex: 0, background: "#0d2016", overflow: "hidden" }}>
-          <img src="/images/hero-obra.jpg" alt="Mercahorro — El comercio que genera patrimonio"
-            style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.80, display: "block" }}
+          <img src="/images/mercahorro-torreon-aerea.jpg" alt="Mercahorro Torreón — Infraestructura real en operación"
+            style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 40%", opacity: 0.85, display: "block" }}
             onError={e => { e.currentTarget.style.display = "none"; }} />
-          <div style={{ position: "absolute", inset: 0, background: "rgba(6,20,9,0.48)" }} />
+          {/* Gradiente direccional — oscurece izquierda donde va el texto, abre derecha para mostrar la infraestructura */}
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(105deg, rgba(6,20,9,0.75) 0%, rgba(6,20,9,0.55) 50%, rgba(6,20,9,0.30) 100%)" }} />
         </div>
 
         <div style={{ position: "relative", zIndex: 1, maxWidth: 1200, margin: "0 auto", padding: "80px 24px", width: "100%" }}>
