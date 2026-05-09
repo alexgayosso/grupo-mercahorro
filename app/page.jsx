@@ -228,7 +228,7 @@ const PROYECTOS = [
   {
     ciudad: "Silao", estado: "Gto.",
     proyecto: "Mercahorro Silao",
-    pct: 0, fase: "Gestión de permisos — Inicio de obra programado",
+    pct: 0, fase: "Inicio de obra: Verano 2026 — ¡Aparta tu local ahora!",
     img: "/images/obra-silao-render.jpg", status: "por-iniciar",
     fotos: ["/images/obra-silao-render.jpg"],
   },
@@ -543,7 +543,7 @@ export default function MercahorroPage() {
                 Locales comerciales con tráfico garantizado. Vende más estando donde tus clientes ya están.
               </p>
               <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 28 }}>
-                {["Miles de compradores diarios", "Infraestructura moderna lista para operar", "Seguridad 24/7 en todo el desarrollo"].map(item => (
+                {["Más de 10,000 clientes diarios garantizados", "Infraestructura moderna lista para operar", "Seguridad 24/7 en todo el desarrollo"].map(item => (
                   <div key={item} style={{ display: "flex", alignItems: "center", gap: 10 }}>
                     <div style={{ width: 20, height: 20, background: "#f0fdf4", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                       <span style={{ fontSize: 11, color: "#1A5C33" }}>✓</span>
