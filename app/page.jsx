@@ -182,8 +182,8 @@ const PROYECTOS = [
   {
     ciudad: "Monterrey", estado: "N.L.",
     proyecto: "Mercahorro Monterrey",
-    pct: 72, fase: "Estructura — Nivel 3 completado",
-    img: "/images/obra-monterrey.jpg", status: "en-obra",
+    pct: 100, fase: "Plaza mayorista en operación continua",
+    img: "/images/obra-monterrey.jpg", status: "operando",
     fotos: ["/images/obra-monterrey.jpg"],
   },
   {
@@ -217,7 +217,13 @@ const PROYECTOS = [
     proyecto: "Plaza Abastos Torreón",
     pct: 100, fase: "Centro comercial de abasto en operación",
     img: "/images/obra-plaza-abastos-torreon.jpg", status: "operando",
-    fotos: ["/images/obra-plaza-abastos-torreon.jpg"],
+    fotos: [
+      "/images/obra-plaza-abastos-torreon.jpg",
+      "/images/bitacora/plaza-abastos-01.jpg",
+      "/images/bitacora/plaza-abastos-02.jpg",
+      "/images/bitacora/plaza-abastos-03.jpg",
+      "/images/bitacora/plaza-abastos-04.jpg",
+    ],
   },
   {
     ciudad: "Silao", estado: "Gto.",
@@ -646,19 +652,19 @@ export default function MercahorroPage() {
             {[
               {
                 texto: "La comunidad del mercado es muy unida. Los clientes regresan porque saben que aquí encuentran calidad y buen trato.",
-                autor: "Locatario Activo",
+                autor: "Sr. Víctor E.",
                 plaza: "Mercahorro Torreón",
                 años: "8 años operando",
               },
               {
                 texto: "Invertir en Mercahorro fue la mejor decisión patrimonial que tomé. La renta llega puntual cada mes y el local siempre está ocupado.",
-                autor: "Inversionista",
+                autor: "Miguel G.",
                 plaza: "Plaza Abastos Torreón",
                 años: "Desde 2019",
               },
               {
-                texto: "El tráfico de clientes es impresionante. Desde que me instalé aquí mis ventas crecieron más del doble comparado con mi local anterior.",
-                autor: "Comerciante",
+                texto: "Llevo años en Mercahorro Torreón y sé cómo funciona el modelo. Cuando vi el proyecto de Gómez Palacio no dudé. La ubicación y el tráfico que van a generar van a superar a Torreón.",
+                autor: "Ivonne G.",
                 plaza: "Mercahorro Gómez Palacio",
                 años: "3 años operando",
               },
@@ -746,8 +752,8 @@ export default function MercahorroPage() {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24 }}>
             {[
               { key: "mercahorro", img: "/images/logo-mercahorro.png",    title: "Grupo Mercahorro", accent: "#1A5C33", link: null, linkLabel: null,           desc: "Desarrollador de infraestructura de abasto mayorista. Marcas Mercahorro y Plaza Abastos en Torreón, Gómez Palacio y Monterrey.", maxH: 70 },
-              { key: "mexico",     img: "/images/logo-merca-mexico.png",  title: "Merca México",     accent: "#3D1C02", link: "https://mercamexico.mx",  linkLabel: "mercamexico.mx →",  desc: "Órgano validador del Registro de Activos Verificados (RAV). Certifica autenticidad y estado operativo de cada propiedad.", maxH: 75 },
-              { key: "capital",    img: "/images/logo-merca-capital.png", title: "Merca Capital",    accent: "#9B1C1C", link: "https://mercacapital.mx", linkLabel: "mercacapital.mx →", desc: "Gestión institucional de inversión. Fondo SAPI con objetivo de 100 millones USD. Para inversores calificados con visión patrimonial.", maxH: 75 },
+              { key: "mexico",     img: "/images/logo-merca-mexico.png",  title: "Merca México",     accent: "#3D1C02", link: "https://mercamexico.mx",  linkLabel: "mercamexico.mx →",  desc: "La institución nacional que agrupa y representa a los comerciantes de abasto de México. El gremio que respalda a cada locatario de nuestras plazas.", maxH: 75 },
+              { key: "capital",    img: "/images/logo-merca-capital.png", title: "Merca Capital",    accent: "#9B1C1C", link: "https://mercacapital.mx", linkLabel: "mercacapital.mx →", desc: "El fondo de inversión que financia el desarrollo de nuevas plazas comerciales. Aquí es donde los inversionistas ponen su capital a trabajar en infraestructura real.", maxH: 75 },
             ].map(({ key, img, title, accent, link, linkLabel, desc, maxH }) => (
               <div key={key} style={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: 12, padding: "28px", borderTop: `4px solid ${accent}`, display: "flex", flexDirection: "column" }}>
                 <div style={{ height: 90, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 20, background: "#fff" }}>
