@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 
 /* ══════════════════════════════════════════
    COUNTER HOOK
@@ -59,9 +60,10 @@ function Modal({ data, onClose }) {
   }, [onClose]);
 
   const BADGE = {
-    "en-obra":     { label: "En Obra",         color: "#9B1C1C" },
-    "operando":    { label: "Operando",         color: "#1A5C33" },
-    "por-iniciar": { label: "Obra por Iniciar", color: "#3D1C02" },
+    "en-obra":       { label: "En Obra",      color: "#9B1C1C" },
+    "operando":      { label: "Operando",      color: "#1A5C33" },
+    "en-desarrollo": { label: "En desarrollo", color: "#1A5C33" },
+    "por-iniciar":   { label: "En desarrollo", color: "#1A5C33" },
   };
   const badge = BADGE[data.status] || BADGE["en-obra"];
 
@@ -72,7 +74,6 @@ function Modal({ data, onClose }) {
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 5 }}>
               <span style={{ background: badge.color, color: "#fff", fontSize: 10, fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", padding: "3px 10px", borderRadius: 4 }}>{badge.label}</span>
-              {data.status === "en-obra" && <span style={{ fontSize: 13, fontWeight: 700, color: "#1A5C33" }}>{data.pct}% avance</span>}
             </div>
             <h2 style={{ margin: 0, fontSize: 20, fontWeight: 900, color: "#111" }}>{data.proyecto}</h2>
             <p style={{ margin: "3px 0 0", fontSize: 13, color: "#6b7280" }}>{data.ciudad}, {data.estado} · {data.fase}</p>
@@ -83,7 +84,12 @@ function Modal({ data, onClose }) {
           {fotos.length > 0 ? (
             <>
               <div style={{ position: "relative", background: "#111", height: 340 }}>
-                <img key={fotos[idx]} src={fotos[idx]} alt={`${data.proyecto} foto ${idx + 1}`} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                <img key={fotos[idx]} src={fotos[idx]} alt={data.altImg || `${data.proyecto} foto ${idx + 1}`} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                {data.altImg && (
+                  <div style={{ position: "absolute", bottom: 10, left: 10, background: "rgba(0,0,0,0.72)", color: "#fff", fontSize: 11, fontWeight: 600, padding: "4px 12px", borderRadius: 4, letterSpacing: "0.08em" }}>
+                    🖼 {data.altImg}
+                  </div>
+                )}
                 {fotos.length > 1 && (
                   <>
                     <button onClick={() => setIdx(i => (i - 1 + fotos.length) % fotos.length)} style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", background: "rgba(0,0,0,0.6)", color: "#fff", border: "none", borderRadius: 8, width: 38, height: 38, fontSize: 20, cursor: "pointer" }}>‹</button>
@@ -109,7 +115,7 @@ function Modal({ data, onClose }) {
               <p style={{ margin: "0 auto", fontSize: 14, color: "#6b7280", maxWidth: 320 }}>Las fotos de avance de {data.proyecto} estarán disponibles próximamente.</p>
             </div>
           )}
-          {data.status === "en-obra" && (
+          {data.status === "en-obra" && typeof data.pct === "number" && data.pct > 0 && (
             <div style={{ padding: "14px 22px", borderTop: "1px solid #e5e7eb" }}>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
                 <span style={{ fontSize: 13, color: "#6b7280", fontWeight: 600 }}>Avance físico documentado</span>
@@ -131,12 +137,13 @@ function Modal({ data, onClose }) {
 ══════════════════════════════════════════ */
 function ObraCard({ data, onOpen }) {
   const BADGE = {
-    "en-obra":     { label: "En Obra",         color: "#9B1C1C" },
-    "operando":    { label: "Operando",         color: "#1A5C33" },
-    "por-iniciar": { label: "Obra por Iniciar", color: "#3D1C02" },
+    "en-obra":       { label: "En Obra",      color: "#9B1C1C" },
+    "operando":      { label: "Operando",      color: "#1A5C33" },
+    "en-desarrollo": { label: "En desarrollo", color: "#1A5C33" },
+    "por-iniciar":   { label: "En desarrollo", color: "#1A5C33" },
   };
   const badge = BADGE[data.status] || BADGE["en-obra"];
-  const showBar = data.status === "en-obra";
+  const showBar = data.status === "en-obra" && typeof data.pct === "number" && data.pct > 0;
 
   return (
     <div
@@ -148,10 +155,12 @@ function ObraCard({ data, onOpen }) {
       style={{ background: "#fff", border: "1px solid #d1d5db", borderRadius: 12, overflow: "hidden", display: "flex", flexDirection: "column", cursor: "pointer", transition: "transform 0.2s, box-shadow 0.2s", outline: "none" }}
     >
       <div style={{ position: "relative", height: 180, background: "#1A5C33", overflow: "hidden", flexShrink: 0 }}>
-        <img src={data.img} alt={data.proyecto} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} onError={(e) => { e.currentTarget.style.display = "none"; }} />
+        <img src={data.img} alt={data.altImg || data.proyecto} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} onError={(e) => { e.currentTarget.style.display = "none"; }} />
         <div style={{ position: "absolute", top: 10, left: 10, background: badge.color, color: "#fff", fontSize: 10, fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", padding: "3px 10px", borderRadius: 4 }}>{badge.label}</div>
-        <div style={{ position: "absolute", top: 10, right: 10, background: "rgba(0,0,0,0.58)", color: "#fff", fontSize: 11, fontWeight: 600, padding: "3px 9px", borderRadius: 4 }}>📷 Ver fotos</div>
-        {data.status !== "por-iniciar" && (
+        <div style={{ position: "absolute", top: 10, right: 10, background: "rgba(0,0,0,0.58)", color: "#fff", fontSize: 11, fontWeight: 600, padding: "3px 9px", borderRadius: 4 }}>
+          {data.altImg ? "🖼 Ver render" : "📷 Ver fotos"}
+        </div>
+        {data.status === "en-obra" && typeof data.pct === "number" && data.pct > 0 && (
           <div style={{ position: "absolute", bottom: 10, right: 10, background: "rgba(0,0,0,0.75)", color: "#fff", fontSize: 22, fontWeight: 900, padding: "4px 12px", borderRadius: 6 }}>{data.pct}%</div>
         )}
       </div>
@@ -202,8 +211,8 @@ const PROYECTOS = [
   {
     ciudad: "Gómez Palacio", estado: "Dgo.",
     proyecto: "Mercahorro Gómez Palacio",
-    pct: 70, fase: "Estructura — Segunda etapa en proceso",
-    img: "/images/obra-gomez-palacio.jpg", status: "en-obra",
+    pct: null, fase: "Proyecto en desarrollo",
+    img: "/images/obra-gomez-palacio.jpg", status: "en-desarrollo",
     fotos: [
       "/images/obra-gomez-palacio.jpg",
       "/images/bitacora/gomez-01.jpg",
@@ -227,9 +236,10 @@ const PROYECTOS = [
   },
   {
     ciudad: "Silao", estado: "Gto.",
-    proyecto: "Mercahorro Silao",
-    pct: 0, fase: "Inicio de obra: Verano 2026 — ¡Aparta tu local ahora!",
-    img: "/images/obra-silao-render.jpg", status: "por-iniciar",
+    proyecto: "Plaza Mercahorro Abastos Silao",
+    pct: null, fase: "Proyecto en desarrollo",
+    img: "/images/obra-silao-render.jpg", status: "en-desarrollo",
+    altImg: "Render del proyecto",
     fotos: ["/images/obra-silao-render.jpg"],
   },
 ];
@@ -239,24 +249,41 @@ const PROYECTOS = [
 ══════════════════════════════════════════ */
 function AgendaForm() {
   const [form, setForm] = useState({ nombre: "", telefono: "", email: "", interes: "", presupuesto: "" });
-  const [sent, setSent] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
-  const handleTel = (e) => setForm({ ...form, telefono: e.target.value.replace(/\D/g, "").slice(0, 10) });
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+    if (errors[e.target.name]) setErrors({ ...errors, [e.target.name]: "" });
+  };
+  const handleTel = (e) => {
+    const digits = e.target.value.replace(/\D/g, "").slice(0, 10);
+    setForm({ ...form, telefono: digits });
+    if (errors.telefono) setErrors({ ...errors, telefono: "" });
+  };
+
+  const emailRef = useRef(null);
+
+  const validate = () => {
+    const next = {};
+    if (!form.nombre.trim()) next.nombre = "Ingresa tu nombre completo.";
+    if (form.telefono.length !== 10) next.telefono = "Ingresa exactamente 10 dígitos.";
+    const emailTrimmed = form.email.trim();
+    if (emailTrimmed && emailRef.current && emailRef.current.validity.typeMismatch) {
+      next.email = "Ingresa un correo electrónico válido.";
+    }
+    if (!form.interes) next.interes = "Selecciona una opción.";
+    return next;
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!form.nombre || !form.telefono || !form.interes) return;
-    setLoading(true);
+    const next = validate();
+    if (Object.keys(next).length > 0) { setErrors(next); return; }
+    const emailTrimmed = form.email.trim();
     const msg = encodeURIComponent(
-      `Hola Mercahorro, soy ${form.nombre}. Me interesa: ${form.interes}. Presupuesto: ${form.presupuesto || "No especificado"}. Tel: ${form.telefono}. Email: ${form.email || "No proporcionado"}.`
+      `Hola Mercahorro, soy ${form.nombre.trim()}. Me interesa: ${form.interes}. Presupuesto: ${form.presupuesto || "No especificado"}. Tel: ${form.telefono}. Email: ${emailTrimmed || "No proporcionado"}.`
     );
-    setTimeout(() => {
-      setLoading(false);
-      setSent(true);
-      window.open(`https://wa.me/528141948410?text=${msg}`, "_blank");
-    }, 800);
+    window.location.href = `https://wa.me/528141948410?text=${msg}`;
   };
 
   const inputStyle = {
@@ -265,45 +292,77 @@ function AgendaForm() {
     outline: "none", background: "#fff", color: "#111",
     boxSizing: "border-box", fontFamily: "inherit",
   };
-
-  if (sent) {
-    return (
-      <div style={{ textAlign: "center", padding: "48px 24px" }}>
-        <div style={{ fontSize: 56, marginBottom: 16 }}>✅</div>
-        <h3 style={{ margin: "0 0 10px", fontSize: 24, fontWeight: 900, color: "#1A5C33" }}>¡Cita agendada!</h3>
-        <p style={{ margin: 0, fontSize: 15, color: "#374151", lineHeight: 1.6 }}>
-          Un asesor te contactará en menos de 24 horas.<br />Te redirigimos también a WhatsApp.
-        </p>
-      </div>
-    );
-  }
+  const errorStyle = { fontSize: 12, color: "#dc2626", marginTop: 4, display: "block" };
 
   return (
-    <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+    <form onSubmit={handleSubmit} noValidate className="mh-form" style={{ display: "flex", flexDirection: "column", gap: 16 }}>
       <div>
-        <label style={{ fontSize: 12, fontWeight: 700, color: "#374151", textTransform: "uppercase", letterSpacing: "0.08em", display: "block", marginBottom: 6 }}>Nombre completo *</label>
-        <input name="nombre" value={form.nombre} onChange={handleChange} placeholder="Tu nombre completo" required style={inputStyle} />
+        <label htmlFor="form-nombre" style={{ fontSize: 12, fontWeight: 700, color: "#374151", textTransform: "uppercase", letterSpacing: "0.08em", display: "block", marginBottom: 6 }}>Nombre completo *</label>
+        <input
+          id="form-nombre" name="nombre" type="text"
+          value={form.nombre} onChange={handleChange}
+          placeholder="Tu nombre completo"
+          autoComplete="name"
+          required
+          aria-invalid={!!errors.nombre}
+          aria-describedby={errors.nombre ? "error-nombre" : undefined}
+          style={{ ...inputStyle, borderColor: errors.nombre ? "#dc2626" : "#d1d5db" }}
+        />
+        {errors.nombre && <span id="error-nombre" role="alert" style={errorStyle}>{errors.nombre}</span>}
       </div>
       <div>
-        <label style={{ fontSize: 12, fontWeight: 700, color: "#374151", textTransform: "uppercase", letterSpacing: "0.08em", display: "block", marginBottom: 6 }}>WhatsApp *</label>
-        <input name="telefono" value={form.telefono} onChange={handleTel} placeholder="10 dígitos" required inputMode="numeric" style={inputStyle} />
+        <label htmlFor="form-telefono" style={{ fontSize: 12, fontWeight: 700, color: "#374151", textTransform: "uppercase", letterSpacing: "0.08em", display: "block", marginBottom: 6 }}>WhatsApp *</label>
+        <input
+          id="form-telefono" name="telefono" type="tel"
+          value={form.telefono} onChange={handleTel}
+          placeholder="10 dígitos"
+          inputMode="numeric"
+          autoComplete="tel-national"
+          required
+          aria-invalid={!!errors.telefono}
+          aria-describedby={errors.telefono ? "error-telefono" : undefined}
+          style={{ ...inputStyle, borderColor: errors.telefono ? "#dc2626" : "#d1d5db" }}
+        />
+        {errors.telefono && <span id="error-telefono" role="alert" style={errorStyle}>{errors.telefono}</span>}
       </div>
       <div>
-        <label style={{ fontSize: 12, fontWeight: 700, color: "#374151", textTransform: "uppercase", letterSpacing: "0.08em", display: "block", marginBottom: 6 }}>Correo electrónico</label>
-        <input name="email" value={form.email} onChange={handleChange} placeholder="tu@email.com" type="email" style={inputStyle} />
+        <label htmlFor="form-email" style={{ fontSize: 12, fontWeight: 700, color: "#374151", textTransform: "uppercase", letterSpacing: "0.08em", display: "block", marginBottom: 6 }}>Correo electrónico</label>
+        <input
+          ref={emailRef}
+          id="form-email" name="email" type="email"
+          value={form.email} onChange={handleChange}
+          placeholder="tu@email.com"
+          autoComplete="email"
+          aria-invalid={!!errors.email}
+          aria-describedby={errors.email ? "error-email" : undefined}
+          style={{ ...inputStyle, borderColor: errors.email ? "#dc2626" : "#d1d5db" }}
+        />
+        {errors.email && <span id="error-email" role="alert" style={errorStyle}>{errors.email}</span>}
       </div>
       <div>
-        <label style={{ fontSize: 12, fontWeight: 700, color: "#374151", textTransform: "uppercase", letterSpacing: "0.08em", display: "block", marginBottom: 6 }}>¿Qué te interesa? *</label>
-        <select name="interes" value={form.interes} onChange={handleChange} required style={{ ...inputStyle, color: form.interes ? "#111" : "#9ca3af" }}>
+        <label htmlFor="form-interes" style={{ fontSize: 12, fontWeight: 700, color: "#374151", textTransform: "uppercase", letterSpacing: "0.08em", display: "block", marginBottom: 6 }}>¿Qué te interesa? *</label>
+        <select
+          id="form-interes" name="interes"
+          value={form.interes} onChange={handleChange}
+          required
+          aria-invalid={!!errors.interes}
+          aria-describedby={errors.interes ? "error-interes" : undefined}
+          style={{ ...inputStyle, color: form.interes ? "#111" : "#9ca3af", borderColor: errors.interes ? "#dc2626" : "#d1d5db" }}
+        >
           <option value="" disabled>Selecciona una opción</option>
           <option value="Local para operar mi negocio">🏪 Local para operar mi negocio</option>
           <option value="Local ya rentado como inversión">📈 Local ya rentado (inversión)</option>
           <option value="Bodega mayorista">🏭 Bodega mayorista</option>
         </select>
+        {errors.interes && <span id="error-interes" role="alert" style={errorStyle}>{errors.interes}</span>}
       </div>
       <div>
-        <label style={{ fontSize: 12, fontWeight: 700, color: "#374151", textTransform: "uppercase", letterSpacing: "0.08em", display: "block", marginBottom: 6 }}>Rango de presupuesto</label>
-        <select name="presupuesto" value={form.presupuesto} onChange={handleChange} style={{ ...inputStyle, color: form.presupuesto ? "#111" : "#9ca3af" }}>
+        <label htmlFor="form-presupuesto" style={{ fontSize: 12, fontWeight: 700, color: "#374151", textTransform: "uppercase", letterSpacing: "0.08em", display: "block", marginBottom: 6 }}>Rango de presupuesto</label>
+        <select
+          id="form-presupuesto" name="presupuesto"
+          value={form.presupuesto} onChange={handleChange}
+          style={{ ...inputStyle, color: form.presupuesto ? "#111" : "#9ca3af" }}
+        >
           <option value="" disabled>Selecciona un rango</option>
           <option value="Menos de $500,000 MXN">Menos de $500,000 MXN</option>
           <option value="$500,000 – $1,000,000 MXN">$500,000 – $1,000,000 MXN</option>
@@ -312,19 +371,17 @@ function AgendaForm() {
           <option value="Solo renta / Prefiero no decir">Solo renta / Prefiero no decir</option>
         </select>
       </div>
-      <button type="submit" disabled={loading} style={{
-        background: loading ? "#6b7280" : "#1A5C33",
-        color: "#fff", border: "none", borderRadius: 8,
+      <button type="submit" style={{
+        background: "#1A5C33", color: "#fff", border: "none", borderRadius: 8,
         padding: "16px", fontSize: 15, fontWeight: 800,
         letterSpacing: "0.08em", textTransform: "uppercase",
-        cursor: loading ? "not-allowed" : "pointer",
-        transition: "background 0.2s", marginTop: 4,
+        cursor: "pointer", transition: "background 0.2s", marginTop: 4,
         fontFamily: "inherit",
       }}>
-        {loading ? "Agendando..." : "AGENDAR MI CITA →"}
+        CONTINUAR EN WHATSAPP →
       </button>
       <p style={{ margin: 0, fontSize: 11, color: "#9ca3af", textAlign: "center" }}>
-        Sin compromisos. Tu información es 100% confidencial.
+        Al continuar, los datos que ingreses se incluirán en un mensaje de WhatsApp. Deberás enviarlo para completar tu solicitud.
       </p>
     </form>
   );
@@ -333,10 +390,22 @@ function AgendaForm() {
 /* ══════════════════════════════════════════
    STAT CARD
 ══════════════════════════════════════════ */
-function StatCard({ value, suffix, label, sub }) {
+function StatCard({ value, suffix, unit, label, sub }) {
   return (
-    <div style={{ textAlign: "center", padding: "36px 20px", borderRight: "1px solid #e5e7eb", flex: "1 1 0" }}>
-      <div style={{ fontSize: "clamp(48px, 7vw, 76px)", fontWeight: 900, color: "#1A5C33", lineHeight: 1 }}>{value}{suffix}</div>
+    <div className="mh-stat-cell" style={{ textAlign: "center", padding: "36px 16px", minWidth: 0 }}>
+      <div style={{
+        fontSize: "clamp(30px, 3.8vw, 58px)", fontWeight: 900,
+        color: "#1A5C33", lineHeight: 1,
+        whiteSpace: "nowrap",
+      }}>
+        {value}
+        {suffix}
+        {unit && (
+          <span style={{ fontSize: "0.42em", fontWeight: 900, verticalAlign: "baseline", marginLeft: "0.12em" }}>
+            {unit}
+          </span>
+        )}
+      </div>
       <div style={{ fontSize: 13, fontWeight: 700, color: "#111", marginTop: 10, textTransform: "uppercase", letterSpacing: "0.05em" }}>{label}</div>
       {sub && <div style={{ fontSize: 12, color: "#6b7280", marginTop: 4 }}>{sub}</div>}
     </div>
@@ -352,9 +421,8 @@ export default function MercahorroPage() {
   const [modalData, setModalData] = useState(null);
   const statsRef = useRef(null);
 
-  const anos   = useCounter(19,  1600, statsOn);
-  const props  = useCounter(300, 2000, statsOn);
-  const puntos = useCounter(89,  1800, statsOn);
+  const centros  = useCounter(3,   1200, statsOn);
+  const comerc   = useCounter(300, 2000, statsOn);
 
   useEffect(() => {
     const obs = new IntersectionObserver(
@@ -378,7 +446,7 @@ export default function MercahorroPage() {
       {/* ══ NAV ══ */}
       <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, backgroundColor: "#ffffff", borderBottom: "2px solid #1A5C33", height: 80, display: "flex", alignItems: "center" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px", width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none", flexShrink: 0, background: "#fff" }}>
+          <Link href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none", flexShrink: 0, background: "#fff" }}>
             <img src="/images/logo-mercahorro.png" alt="Grupo Mercahorro"
               style={{ height: 60, width: "auto", display: "block" }}
               onError={(e) => { e.currentTarget.style.display = "none"; e.currentTarget.nextSibling.style.display = "flex"; }} />
@@ -388,7 +456,7 @@ export default function MercahorroPage() {
               </div>
               <span style={{ fontWeight: 900, fontSize: 15, color: "#111", textTransform: "uppercase" }}>Grupo Mercahorro</span>
             </div>
-          </a>
+          </Link>
 
           <div className="nav-desktop" style={{ display: "flex", gap: 24, alignItems: "center" }}>
             {[
@@ -408,7 +476,7 @@ export default function MercahorroPage() {
               onMouseEnter={e => e.currentTarget.style.color = "#1A5C33"}
               onMouseLeave={e => e.currentTarget.style.color = "#374151"}
             >Bitácora</a>
-            <a href="https://mercacapital.mx" target="_blank" rel="noopener noreferrer"
+            <a href="https://mercacapital.com" target="_blank" rel="noopener noreferrer"
               style={{ fontSize: 11, fontWeight: 600, color: "#9ca3af", textDecoration: "none", textTransform: "uppercase", letterSpacing: "0.04em", borderBottom: "1px solid #e5e7eb", paddingBottom: 1 }}
               onMouseEnter={e => e.currentTarget.style.color = "#9B1C1C"}
               onMouseLeave={e => e.currentTarget.style.color = "#9ca3af"}
@@ -439,7 +507,7 @@ export default function MercahorroPage() {
             ))}
             <a href="#" onClick={(e) => { e.preventDefault(); setMenuOpen(false); setModalData(PROYECTOS[2]); }}
               style={{ fontSize: 16, fontWeight: 700, color: "#111", textDecoration: "none" }}>Bitácora</a>
-            <a href="https://mercacapital.mx" target="_blank" rel="noopener noreferrer"
+            <a href="https://mercacapital.com" target="_blank" rel="noopener noreferrer"
               style={{ fontSize: 14, fontWeight: 600, color: "#9B1C1C", textDecoration: "none" }}>Inversionistas Institucionales →</a>
             <button onClick={() => { setMenuOpen(false); scrollToForm(); }}
               style={{ background: "#1A5C33", color: "#fff", padding: "14px 16px", borderRadius: 8, border: "none", fontWeight: 800, fontSize: 15, cursor: "pointer", textTransform: "uppercase", fontFamily: "inherit" }}>
@@ -463,15 +531,15 @@ export default function MercahorroPage() {
           <div style={{ maxWidth: 720 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 24 }}>
               <div style={{ width: 40, height: 3, background: "#9B1C1C" }} />
-              <span style={{ color: "#9B1C1C", fontSize: 11, fontWeight: 800, letterSpacing: "0.35em", textTransform: "uppercase" }}>Norte de México · Desde 2007</span>
+              <span style={{ color: "#9B1C1C", fontSize: 11, fontWeight: 800, letterSpacing: "0.35em", textTransform: "uppercase" }}>Desarrollo inmobiliario · Abasto de alimentos</span>
             </div>
-            <h1 style={{ margin: 0, lineHeight: 1.0, fontWeight: 900, textTransform: "uppercase", fontSize: "clamp(38px, 7vw, 82px)", textShadow: "0 2px 16px rgba(0,0,0,0.8)" }}>
-              <span style={{ display: "block", color: "#fff" }}>EL COMERCIO QUE</span>
-              <span style={{ display: "block", color: "#4ADE80" }}>GENERA PATRIMONIO</span>
-              <span style={{ display: "block", color: "#fff" }}>REAL</span>
+            <h1 style={{ margin: 0, lineHeight: 1.0, fontWeight: 900, textTransform: "uppercase", fontSize: "clamp(22px, 7vw, 82px)", textShadow: "0 2px 16px rgba(0,0,0,0.8)" }}>
+              <span style={{ display: "block", color: "#fff" }}>DESARROLLAMOS</span>
+              <span style={{ display: "block", color: "#4ADE80" }}>INFRAESTRUCTURA</span>
+              <span style={{ display: "block", color: "#fff" }}>PARA EL ABASTO</span>
             </h1>
             <p style={{ marginTop: 28, marginBottom: 0, fontSize: "clamp(16px, 2.2vw, 20px)", color: "#d1fae5", lineHeight: 1.7, maxWidth: 600, textShadow: "0 1px 4px rgba(0,0,0,0.6)" }}>
-              Mercahorro es un mercado moderno y un activo patrimonial. Un espacio donde el comercio tradicional se encuentra con la inversión inteligente.
+              Grupo Mercahorro diseña, desarrolla, construye, comercializa y opera centros especializados en distribución y abasto de alimentos. Integramos experiencia inmobiliaria y conocimiento del comerciante para crear espacios donde productores, distribuidores y negocios puedan operar.
             </p>
             <div style={{ marginTop: 36, display: "flex", flexWrap: "wrap", gap: 14 }}>
               <button onClick={scrollToForm}
@@ -483,14 +551,6 @@ export default function MercahorroPage() {
                 Conoce el mercado →
               </a>
             </div>
-            <div style={{ marginTop: 40, display: "flex", flexWrap: "wrap", gap: 10 }}>
-              {["CVC Occidente", "CVC Centro", "CVC Norte"].map(c => (
-                <div key={c} style={{ display: "flex", alignItems: "center", gap: 6, border: "1px solid rgba(74,222,128,0.35)", padding: "6px 14px", borderRadius: 6 }}>
-                  <div style={{ width: 7, height: 7, background: "#4ADE80", borderRadius: "50%" }} />
-                  <span style={{ color: "#d1fae5", fontSize: 11, fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase" }}>{c}</span>
-                </div>
-              ))}
-            </div>
           </div>
         </div>
       </section>
@@ -498,15 +558,11 @@ export default function MercahorroPage() {
       {/* ══ ESTADÍSTICAS ══ */}
       <section ref={statsRef} style={{ background: "#fff", borderTop: "4px solid #1A5C33", borderBottom: "1px solid #e5e7eb" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
-          <div style={{ display: "flex", flexWrap: "wrap" }}>
-            <StatCard value={anos}   suffix=""  label="Años de Experiencia"       sub="Desde 2007 en operación" />
-            <StatCard value={props}  suffix="+" label="Propiedades Desarrolladas"  sub="Locales comerciales activos" />
-            <StatCard value={puntos} suffix=""  label="Puntos de Influencia"       sub="Red nacional de abasto" />
-            <div style={{ flex: "1 1 0", textAlign: "center", padding: "36px 20px" }}>
-              <div style={{ fontSize: "clamp(48px,7vw,76px)", fontWeight: 900, color: "#1A5C33", lineHeight: 1 }}>3</div>
-              <div style={{ fontSize: 13, fontWeight: 700, color: "#111", marginTop: 10, textTransform: "uppercase", letterSpacing: "0.05em" }}>Centros de Validación</div>
-              <div style={{ fontSize: 12, color: "#6b7280", marginTop: 4 }}>Occidente · Centro · Norte</div>
-            </div>
+          <div className="mh-stats-grid">
+            <StatCard value={centros} suffix=""   label="Centros en operación"   sub="Dos en Torreón y uno en Monterrey" />
+            <StatCard value={comerc}  suffix="+"  label="Comerciantes activos"   sub="En nuestros centros" />
+            <StatCard value="≈52,000" unit="m²"   label="Superficie desarrollada" sub="En nuestros desarrollos" />
+            <StatCard value="≈20"     unit="años"  label="Experiencia del equipo"  sub="En desarrollo inmobiliario" />
           </div>
         </div>
       </section>
@@ -540,10 +596,10 @@ export default function MercahorroPage() {
                 Quiero un espacio para operar mi negocio
               </h3>
               <p style={{ margin: "0 0 28px", fontSize: 16, color: "#374151", lineHeight: 1.7 }}>
-                Locales comerciales con tráfico garantizado. Vende más estando donde tus clientes ya están.
+                Locales y bodegas dentro de centros especializados en abasto, para comerciantes, productores y distribuidores.
               </p>
               <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 28 }}>
-                {["Más de 10,000 clientes diarios garantizados", "Infraestructura moderna lista para operar", "Seguridad 24/7 en todo el desarrollo"].map(item => (
+                {["Espacios para comercio y distribución de alimentos", "Opciones de compra o renta, sujetas a disponibilidad", "Asesoría comercial según las necesidades de tu negocio"].map(item => (
                   <div key={item} style={{ display: "flex", alignItems: "center", gap: 10 }}>
                     <div style={{ width: 20, height: 20, background: "#f0fdf4", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                       <span style={{ fontSize: 11, color: "#1A5C33" }}>✓</span>
@@ -570,10 +626,10 @@ export default function MercahorroPage() {
                 Quiero invertir en un activo comercial
               </h3>
               <p style={{ margin: "0 0 28px", fontSize: 16, color: "#374151", lineHeight: 1.7 }}>
-                Patrimonio con demanda inelástica. Un activo que se mantiene relevante en cualquier ciclo económico.
+                Compra de locales y bodegas como patrimonio inmobiliario, con condiciones específicas para cada espacio y proyecto.
               </p>
               <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 28 }}>
-                {["TIR comprobada del 24 al 28%", "Renta garantizada desde el primer mes", "15 años de historial operativo ininterrumpido"].map(item => (
+                {["Compra directa de un inmueble comercial", "Disponibilidad y condiciones por proyecto", "Información comercial para evaluar cada opción"].map(item => (
                   <div key={item} style={{ display: "flex", alignItems: "center", gap: 10 }}>
                     <div style={{ width: 20, height: 20, background: "#fef2f2", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                       <span style={{ fontSize: 11, color: "#9B1C1C" }}>✓</span>
@@ -600,10 +656,10 @@ export default function MercahorroPage() {
               <div style={{ width: 24, height: 3, background: "#9B1C1C" }} />
             </div>
             <h2 style={{ margin: "0 0 12px", fontSize: "clamp(28px,4vw,42px)", fontWeight: 900, color: "#111", textTransform: "uppercase" }}>
-              Agenda tu <span style={{ color: "#1A5C33" }}>Cita</span>
+              Contacto <span style={{ color: "#1A5C33" }}>Comercial</span>
             </h2>
             <p style={{ margin: 0, fontSize: 16, color: "#6b7280", lineHeight: 1.6 }}>
-              Un asesor especializado te contacta con las opciones disponibles según tu perfil y presupuesto.
+              Cuéntanos qué espacio buscas. Continúa en WhatsApp para consultar disponibilidad o solicitar una cita con un asesor.
             </p>
           </div>
           <div style={{ background: "#f9fafb", borderRadius: 20, padding: "40px 36px", border: "1px solid #e5e7eb", boxShadow: "0 4px 32px rgba(0,0,0,0.07)" }}>
@@ -624,7 +680,7 @@ export default function MercahorroPage() {
               Nuestros <span style={{ color: "#1A5C33" }}>Proyectos</span>
             </h2>
             <p style={{ margin: "10px 0 0", fontSize: 14, color: "#6b7280", maxWidth: 480, lineHeight: 1.6 }}>
-              Haz clic en cualquier proyecto para abrir su <strong>Bitácora de Obra</strong> — galería de avances fotográficos verificados en campo.
+              Conoce nuestros centros en operación y proyectos en desarrollo.
             </p>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24 }}>
@@ -635,8 +691,8 @@ export default function MercahorroPage() {
         </div>
       </section>
 
-      {/* ══ TESTIMONIOS ══ */}
-      <section style={{ background: "#fff", padding: "96px 24px", borderBottom: "1px solid #e5e7eb" }}>
+      {/* ══ TESTIMONIOS — retirado temporalmente ══ */}
+      {false && <section style={{ background: "#fff", padding: "96px 24px", borderBottom: "1px solid #e5e7eb" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 56 }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, marginBottom: 10 }}>
@@ -670,7 +726,7 @@ export default function MercahorroPage() {
               },
             ].map(({ texto, autor, plaza, años }) => (
               <div key={autor} style={{ background: "#f9fafb", border: "1px solid #e5e7eb", borderRadius: 16, padding: "32px 28px", position: "relative" }}>
-                <div style={{ fontSize: 40, color: "#1A5C33", lineHeight: 1, marginBottom: 16, fontFamily: "Georgia, serif" }}>"</div>
+                <div style={{ fontSize: 40, color: "#1A5C33", lineHeight: 1, marginBottom: 16, fontFamily: "Georgia, serif" }}>&ldquo;</div>
                 <p style={{ margin: "0 0 24px", fontSize: 16, color: "#374151", lineHeight: 1.7, fontStyle: "italic" }}>{texto}</p>
                 <div style={{ borderTop: "1px solid #e5e7eb", paddingTop: 16 }}>
                   <div style={{ fontSize: 14, fontWeight: 800, color: "#111" }}>{autor}</div>
@@ -684,7 +740,7 @@ export default function MercahorroPage() {
             ))}
           </div>
         </div>
-      </section>
+      </section>}
 
       {/* ══ LEGITIMIDAD ══ */}
       <section id="inversion" style={{ background: "#f9fafb", padding: "96px 24px", borderBottom: "1px solid #e5e7eb" }}>
@@ -693,29 +749,20 @@ export default function MercahorroPage() {
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
                 <div style={{ width: 24, height: 3, background: "#9B1C1C" }} />
-                <span style={{ fontSize: 11, fontWeight: 800, color: "#9B1C1C", letterSpacing: "0.3em", textTransform: "uppercase" }}>Activo Probado · Torreón, Coahuila</span>
+                <span style={{ fontSize: 11, fontWeight: 800, color: "#9B1C1C", letterSpacing: "0.3em", textTransform: "uppercase" }}>Experiencia operativa · Torreón, Coahuila</span>
               </div>
               <h2 style={{ margin: 0, fontSize: "clamp(28px,4vw,44px)", fontWeight: 900, color: "#111", textTransform: "uppercase", lineHeight: 1.1 }}>
-                Un clúster comercial vivo.{" "}
-                <span style={{ color: "#1A5C33" }}>No un prospecto.</span>
+                <span style={{ color: "#1A5C33" }}>Infraestructura en operación</span>
               </h2>
               <p style={{ margin: "20px 0", fontSize: 15, color: "#374151", lineHeight: 1.8 }}>
-                Mercahorro Torreón es infraestructura de abasto en operación: más de 150 locales activos, flujo constante de mayoristas, y demanda estructural que no depende de ciclos especulativos.
+                Los centros Mercahorro reúnen comerciantes y distribuidores en espacios especializados para el abasto de alimentos.
               </p>
               <p style={{ margin: "0 0 32px", fontSize: 15, color: "#374151", lineHeight: 1.8 }}>
-                Los activos de mercado mayorista son anticíclicos por definición. La cadena de alimentos no para. Los flujos de renta tampoco.
+                Grupo Mercahorro integra desarrollo inmobiliario, comercialización, administración y operación. La experiencia de nuestros centros orienta el desarrollo de nuevos proyectos.
               </p>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14, marginBottom: 36 }}>
-                {[{ v: "24–28%", l: "TIR proyectada" }, { v: "8–12%", l: "Renta anual" }, { v: "15 años", l: "Historial" }].map(({ v, l }) => (
-                  <div key={l} style={{ background: "#fff", border: "1px solid #bbf7d0", borderRadius: 12, padding: "16px 12px", textAlign: "center" }}>
-                    <div style={{ fontSize: 22, fontWeight: 900, color: "#1A5C33" }}>{v}</div>
-                    <div style={{ fontSize: 11, color: "#6b7280", marginTop: 4, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em" }}>{l}</div>
-                  </div>
-                ))}
-              </div>
-              <a href="https://mercacapital.mx" target="_blank" rel="noopener noreferrer"
+              <a href="https://mercacapital.com" target="_blank" rel="noopener noreferrer"
                 style={{ display: "inline-block", background: "#9B1C1C", color: "#fff", fontSize: 14, fontWeight: 800, letterSpacing: "0.08em", textTransform: "uppercase", padding: "14px 28px", borderRadius: 8, textDecoration: "none" }}>
-                Perfil de Inversión — Merca Capital →
+                Conoce Merca Capital →
               </a>
             </div>
             <div style={{ position: "relative" }}>
@@ -739,21 +786,21 @@ export default function MercahorroPage() {
           <div style={{ textAlign: "center", marginBottom: 52 }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, marginBottom: 10 }}>
               <div style={{ width: 24, height: 3, background: "#1A5C33" }} />
-              <span style={{ fontSize: 11, fontWeight: 800, color: "#1A5C33", letterSpacing: "0.3em", textTransform: "uppercase" }}>Garantía Corporativa</span>
+              <span style={{ fontSize: 11, fontWeight: 800, color: "#1A5C33", letterSpacing: "0.3em", textTransform: "uppercase" }}>Funciones y relaciones institucionales</span>
               <div style={{ width: 24, height: 3, background: "#1A5C33" }} />
             </div>
             <h2 style={{ margin: 0, fontSize: "clamp(28px,4vw,42px)", fontWeight: 900, color: "#111", textTransform: "uppercase" }}>
               El <span style={{ color: "#1A5C33" }}>Ecosistema</span>
             </h2>
             <p style={{ margin: "12px auto 0", fontSize: 15, color: "#6b7280", maxWidth: 520, lineHeight: 1.6 }}>
-              Tres entidades que operan de forma coordinada para garantizar transparencia, validación y gestión institucional del capital.
+              Grupo Mercahorro desarrolla y opera los centros Mercahorro. Merca Capital estructura vehículos de inversión y canaliza capital. La participación institucional en el sector de abasto tiene un ámbito distinto.
             </p>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24 }}>
             {[
-              { key: "mercahorro", img: "/images/logo-mercahorro.png",    title: "Grupo Mercahorro", accent: "#1A5C33", link: null, linkLabel: null,           desc: "Desarrollador de infraestructura de abasto mayorista. Marcas Mercahorro y Plaza Abastos en Torreón, Gómez Palacio y Monterrey.", maxH: 70 },
-              { key: "mexico",     img: "/images/logo-merca-mexico.png",  title: "Merca México",     accent: "#3D1C02", link: "https://mercamexico.mx",  linkLabel: "mercamexico.mx →",  desc: "La institución nacional que agrupa y representa a los comerciantes de abasto de México. El gremio que respalda a cada locatario de nuestras plazas.", maxH: 75 },
-              { key: "capital",    img: "/images/logo-merca-capital.png", title: "Merca Capital",    accent: "#9B1C1C", link: "https://mercacapital.mx", linkLabel: "mercacapital.mx →", desc: "El fondo de inversión que financia el desarrollo de nuevas plazas comerciales. Aquí es donde los inversionistas ponen su capital a trabajar en infraestructura real.", maxH: 75 },
+              { key: "mercahorro", img: "/images/logo-mercahorro.png",    title: "Grupo Mercahorro", accent: "#1A5C33", link: null, linkLabel: null,                      desc: "Desarrollador y operador de centros especializados en distribución y abasto de alimentos. Integra diseño, construcción, comercialización, venta, renta, administración y operación.", maxH: 70 },
+              { key: "mexico",     img: "/images/logo-merca-mexico.png",  title: "Merca México",     accent: "#3D1C02", link: "https://mercamexico.mx",  linkLabel: "mercamexico.mx →",  desc: "Consulta información sobre Merca México y su actividad en el sector de abasto.", maxH: 75 },
+              { key: "capital",    img: "/images/logo-merca-capital.png", title: "Merca Capital",    accent: "#9B1C1C", link: "https://mercacapital.com", linkLabel: "mercacapital.com →", desc: "Plataforma que estructura y administra vehículos privados de inversión y canaliza capital hacia proyectos inmobiliarios. El desarrollo y la operación de los centros corresponden a Grupo Mercahorro.", maxH: 75 },
             ].map(({ key, img, title, accent, link, linkLabel, desc, maxH }) => (
               <div key={key} style={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: 12, padding: "28px", borderTop: `4px solid ${accent}`, display: "flex", flexDirection: "column" }}>
                 <div style={{ height: 90, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 20, background: "#fff" }}>
@@ -780,17 +827,17 @@ export default function MercahorroPage() {
                 <div style={{ display: "none", fontWeight: 900, fontSize: 16, color: "#fff", textTransform: "uppercase" }}>Grupo Mercahorro</div>
               </div>
               <p style={{ margin: "0 0 16px", fontSize: 13, color: "#9ca3af", lineHeight: 1.7 }}>
-                Infraestructura de abasto mayorista en el norte de México. 19 años de operación ininterrumpida.
+                Desarrollamos, comercializamos, administramos y operamos infraestructura comercial especializada en abasto de alimentos.
               </p>
-              <a href="https://mercacapital.mx" target="_blank" rel="noopener noreferrer"
+              <a href="https://mercacapital.com" target="_blank" rel="noopener noreferrer"
                 style={{ fontSize: 12, color: "#6b7280", textDecoration: "none", borderBottom: "1px solid rgba(255,255,255,0.15)", paddingBottom: 2, display: "inline-block" }}
                 onMouseEnter={e => e.currentTarget.style.color = "#fff"}
                 onMouseLeave={e => e.currentTarget.style.color = "#6b7280"}
               >Inversionistas Institucionales y Patrimoniales →</a>
             </div>
             <div>
-              <p style={{ margin: "0 0 16px", fontSize: 11, fontWeight: 700, color: "#9ca3af", letterSpacing: "0.25em", textTransform: "uppercase" }}>Plazas en Operación</p>
-              {[{ c: "Torreón", e: "Coahuila" }, { c: "Gómez Palacio", e: "Durango" }, { c: "Monterrey", e: "Nuevo León" }, { c: "Silao", e: "Guanajuato — En desarrollo" }].map(({ c, e }) => (
+              <p style={{ margin: "0 0 16px", fontSize: 11, fontWeight: 700, color: "#9ca3af", letterSpacing: "0.25em", textTransform: "uppercase" }}>Centros y proyectos</p>
+              {[{ c: "Torreón", e: "En operación" }, { c: "Monterrey", e: "En operación" }, { c: "Gómez Palacio", e: "En desarrollo" }, { c: "Silao", e: "En desarrollo" }].map(({ c, e }) => (
                 <div key={c} style={{ marginBottom: 12 }}>
                   <div style={{ fontSize: 14, fontWeight: 700, color: "#f3f4f6" }}>{c}</div>
                   <div style={{ fontSize: 12, color: "#6b7280" }}>{e}</div>
@@ -800,10 +847,10 @@ export default function MercahorroPage() {
             <div>
               <p style={{ margin: "0 0 16px", fontSize: 11, fontWeight: 700, color: "#9ca3af", letterSpacing: "0.25em", textTransform: "uppercase" }}>Ecosistema</p>
               {[
-                { label: "Merca México",  sub: "Validación RAV",      href: "https://mercamexico.mx" },
-                { label: "Merca Capital", sub: "Gestión inversión",    href: "https://mercacapital.mx" },
-                { label: "Mercahorro",    sub: "Desarrollo comercial", href: "#" },
-                { label: "Plaza Abastos", sub: "Marca regional",       href: "#" },
+                { label: "Merca México",  sub: "Sector de abasto",        href: "https://mercamexico.mx" },
+                { label: "Merca Capital", sub: "Plataforma de inversión",  href: "https://mercacapital.com" },
+                { label: "Mercahorro",    sub: "Red de centros de abasto", href: "#" },
+                { label: "Plaza Abastos", sub: "Marca regional",           href: "#" },
               ].map(({ label, sub, href }) => (
                 <a key={label} href={href} target={href.startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer"
                   style={{ display: "block", marginBottom: 12, textDecoration: "none" }}>
@@ -838,6 +885,55 @@ export default function MercahorroPage() {
         @media (max-width: 640px) { .nav-desktop { display: none !important; } .nav-mobile-btn { display: block !important; } }
         @media (min-width: 641px) { .nav-mobile-btn { display: none !important; } }
         * { box-sizing: border-box; }
+        .mh-form input:focus-visible,
+        .mh-form select:focus-visible,
+        .mh-form button:focus-visible {
+          outline: 2px solid #1A5C33 !important;
+          outline-offset: 2px !important;
+        }
+
+        /* ── Estadísticas: grid responsive ── */
+        .mh-stats-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+        }
+        .mh-stat-cell {
+          border-right: 1px solid #e5e7eb;
+        }
+        .mh-stat-cell:last-child {
+          border-right: none;
+        }
+
+        /* Tablet: 2 columnas */
+        @media (max-width: 1023px) {
+          .mh-stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+          .mh-stat-cell:nth-child(2) {
+            border-right: none;
+          }
+          .mh-stat-cell:nth-child(1),
+          .mh-stat-cell:nth-child(2) {
+            border-bottom: 1px solid #e5e7eb;
+          }
+          .mh-stat-cell:nth-child(4) {
+            border-right: none;
+          }
+        }
+
+        /* Móvil estrecho: 1 columna */
+        @media (max-width: 479px) {
+          .mh-stats-grid {
+            grid-template-columns: 1fr;
+          }
+          .mh-stat-cell {
+            border-right: none;
+            border-bottom: 1px solid #e5e7eb;
+          }
+          .mh-stat-cell:last-child {
+            border-bottom: none;
+          }
+        }
       `}</style>
     </div>
   );
