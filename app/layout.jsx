@@ -37,9 +37,16 @@ export const metadata = {
   },
 };
 
+// Guarda los UTM de la URL de llegada ANTES de que Next.js hidrate la página,
+// porque en producción la URL pierde los parámetros al cargar.
+const CAPTURA_ORIGEN = `(function(){try{var p=new URLSearchParams(location.search);var k=["utm_source","utm_medium","utm_campaign","utm_content","utm_term","gclid","fbclid"];var o={};k.forEach(function(x){var v=p.get(x);if(v)o[x]=v.slice(0,200)});if(Object.keys(o).length){sessionStorage.setItem("mh_origen",JSON.stringify(o));sessionStorage.setItem("mh_landing",location.href.slice(0,200))}}catch(e){}})();`;
+
 export default function RootLayout({ children }) {
   return (
     <html lang="es-MX">
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: CAPTURA_ORIGEN }} />
+      </head>
       <body>
         <CustomCursor />
         {children}

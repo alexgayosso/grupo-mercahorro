@@ -342,7 +342,7 @@ function AgendaForm({ preset }) {
       email: emailTrimmed,
       consentimiento: true,
       ...origenRef.current,
-      pagina: window.location.href.slice(0, 200),
+      pagina: (() => { try { return sessionStorage.getItem("mh_landing") || window.location.href; } catch { return window.location.href; } })().slice(0, 200),
       referer: document.referrer.slice(0, 200),
     };
 
