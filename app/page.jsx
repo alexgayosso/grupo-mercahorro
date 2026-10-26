@@ -550,6 +550,14 @@ export default function MercahorroPage() {
   const [formPreset, setFormPreset] = useState(null);
 
   // Lleva al formulario. Si recibe un preset (p. ej. { proyecto: "Gómez Palacio" }), lo precarga.
+  // Si se llega con #agenda (o #agenda?utm_...), baja al formulario al cargar
+  useEffect(() => {
+    if (window.location.hash.startsWith("#agenda")) {
+      const t = setTimeout(() => document.getElementById("agenda")?.scrollIntoView({ behavior: "smooth" }), 150);
+      return () => clearTimeout(t);
+    }
+  }, []);
+
   const scrollToForm = (preset) => {
     if (preset && !preset.target) setFormPreset((prev) => ({ datos: { ...preset }, version: (prev?.version || 0) + 1 }));
     document.getElementById("agenda")?.scrollIntoView({ behavior: "smooth" });

@@ -37,9 +37,10 @@ export const metadata = {
   },
 };
 
-// Guarda los UTM de la URL de llegada ANTES de que Next.js hidrate la página,
-// porque en producción la URL pierde los parámetros al cargar.
-const CAPTURA_ORIGEN = `(function(){try{var p=new URLSearchParams(location.search);var k=["utm_source","utm_medium","utm_campaign","utm_content","utm_term","gclid","fbclid"];var o={};k.forEach(function(x){var v=p.get(x);if(v)o[x]=v.slice(0,200)});if(Object.keys(o).length){sessionStorage.setItem("mh_origen",JSON.stringify(o));sessionStorage.setItem("mh_landing",location.href.slice(0,200))}}catch(e){}})();`;
+// Guarda los UTM de la URL de llegada ANTES de que Next.js hidrate la página.
+// Lee tanto ?utm_... como #agenda?utm_... : el dominio redirige (307) y descarta el query,
+// pero lo que va después de # sobrevive a la redirección.
+const CAPTURA_ORIGEN = `(function(){try{var q=location.search;var h=location.hash||"";var k=h.indexOf("?");var base=h;if(k>-1){q=(q?q+"&":"?")+h.slice(k+1);base=h.slice(0,k)}var p=new URLSearchParams(q);var ks=["utm_source","utm_medium","utm_campaign","utm_content","utm_term","gclid","fbclid"];var o={};ks.forEach(function(x){var v=p.get(x);if(v)o[x]=v.slice(0,200)});if(Object.keys(o).length){sessionStorage.setItem("mh_origen",JSON.stringify(o));sessionStorage.setItem("mh_landing",location.href.slice(0,200))}if(k>-1){history.replaceState(null,"",location.pathname+location.search+base)}}catch(e){}})();`;
 
 export default function RootLayout({ children }) {
   return (
