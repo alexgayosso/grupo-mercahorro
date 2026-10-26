@@ -3,25 +3,6 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 
 /* ══════════════════════════════════════════
-   COUNTER HOOK
-══════════════════════════════════════════ */
-function useCounter(target, duration, active) {
-  const [val, setVal] = useState(0);
-  useEffect(() => {
-    if (!active) return;
-    let start = null;
-    const tick = (ts) => {
-      if (!start) start = ts;
-      const p = Math.min((ts - start) / duration, 1);
-      setVal(Math.floor((1 - Math.pow(1 - p, 3)) * target));
-      if (p < 1) requestAnimationFrame(tick);
-    };
-    requestAnimationFrame(tick);
-  }, [active, target, duration]);
-  return val;
-}
-
-/* ══════════════════════════════════════════
    PROGRESS BAR
 ══════════════════════════════════════════ */
 function ProgressBar({ pct }) {
@@ -45,7 +26,7 @@ function ProgressBar({ pct }) {
 /* ══════════════════════════════════════════
    MODAL GALERÍA
 ══════════════════════════════════════════ */
-function Modal({ data, onClose }) {
+function Modal({ data, onClose, onCta }) {
   const [idx, setIdx] = useState(0);
   const fotos = data.fotos || [];
 
@@ -65,7 +46,8 @@ function Modal({ data, onClose }) {
     "en-desarrollo": { label: "En desarrollo", color: "#1A5C33" },
     "por-iniciar":   { label: "En desarrollo", color: "#1A5C33" },
   };
-  const badge = BADGE[data.status] || BADGE["en-obra"];
+  const base = BADGE[data.status] || BADGE["en-obra"];
+  const badge = data.badgeLabel ? { ...base, label: data.badgeLabel } : base;
 
   return (
     <div onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 9999, background: "rgba(0,0,0,0.80)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
@@ -115,6 +97,34 @@ function Modal({ data, onClose }) {
               <p style={{ margin: "0 auto", fontSize: 14, color: "#6b7280", maxWidth: 320 }}>Las fotos de avance de {data.proyecto} estarán disponibles próximamente.</p>
             </div>
           )}
+          {data.ficha && (
+            <div style={{ padding: "20px 22px 24px", borderTop: "1px solid #e5e7eb" }}>
+              <div className="mh-ficha-grid">
+                {data.ficha.datos.map(({ k, v }) => (
+                  <div key={k} style={{ background: "#f9fafb", border: "1px solid #e5e7eb", borderRadius: 10, padding: "10px 12px" }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: "#6b7280", textTransform: "uppercase", letterSpacing: "0.06em" }}>{k}</div>
+                    <div style={{ fontSize: 16, fontWeight: 800, color: "#1A5C33", marginTop: 2 }}>{v}</div>
+                  </div>
+                ))}
+              </div>
+              <p style={{ margin: "16px 0 10px", fontSize: 14, color: "#374151", lineHeight: 1.6 }}>{data.ficha.renta}</p>
+              <div style={{ border: "1px solid #e5e7eb", borderRadius: 10, overflow: "hidden" }}>
+                {data.ficha.ejemplos.map(({ u, m }, i) => (
+                  <div key={u} style={{ display: "flex", justifyContent: "space-between", gap: 12, padding: "10px 14px", fontSize: 14, background: i % 2 ? "#fff" : "#f0fdf4" }}>
+                    <span style={{ color: "#374151" }}>{u}</span>
+                    <span style={{ fontWeight: 800, color: "#111" }}>{m}</span>
+                  </div>
+                ))}
+              </div>
+              <p style={{ margin: "10px 0 16px", fontSize: 11, color: "#9ca3af", lineHeight: 1.5 }}>{data.ficha.nota}</p>
+              {onCta && (
+                <button onClick={() => onCta(data.ficha.cta)}
+                  style={{ width: "100%", background: "#1A5C33", color: "#fff", border: "none", borderRadius: 8, padding: "14px", fontSize: 14, fontWeight: 800, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer", fontFamily: "inherit" }}>
+                  Quiero información de esta plaza →
+                </button>
+              )}
+            </div>
+          )}
           {data.status === "en-obra" && typeof data.pct === "number" && data.pct > 0 && (
             <div style={{ padding: "14px 22px", borderTop: "1px solid #e5e7eb" }}>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
@@ -142,7 +152,8 @@ function ObraCard({ data, onOpen }) {
     "en-desarrollo": { label: "En desarrollo", color: "#1A5C33" },
     "por-iniciar":   { label: "En desarrollo", color: "#1A5C33" },
   };
-  const badge = BADGE[data.status] || BADGE["en-obra"];
+  const base = BADGE[data.status] || BADGE["en-obra"];
+  const badge = data.badgeLabel ? { ...base, label: data.badgeLabel } : base;
   const showBar = data.status === "en-obra" && typeof data.pct === "number" && data.pct > 0;
 
   return (
@@ -190,7 +201,7 @@ function ObraCard({ data, onOpen }) {
 const PROYECTOS = [
   {
     ciudad: "Monterrey", estado: "N.L.",
-    proyecto: "Mercahorro Monterrey",
+    proyecto: "Plaza Abastos Monterrey",
     pct: 100, fase: "Plaza mayorista en operación continua",
     img: "/images/obra-monterrey.jpg", status: "operando",
     fotos: ["/images/obra-monterrey.jpg"],
@@ -211,8 +222,25 @@ const PROYECTOS = [
   {
     ciudad: "Gómez Palacio", estado: "Dgo.",
     proyecto: "Mercahorro Gómez Palacio",
-    pct: null, fase: "Proyecto en desarrollo",
+    pct: null, fase: "85% de avance · 85% rentado · Apertura prevista feb 2027",
     img: "/images/obra-gomez-palacio.jpg", status: "en-desarrollo",
+    badgeLabel: "85% de avance",
+    ficha: {
+      datos: [
+        { k: "Avance de obra", v: "85%" },
+        { k: "Unidades rentadas", v: "85%" },
+        { k: "Apertura prevista", v: "Febrero 2027" },
+        { k: "Bodegas", v: "$2.5 a $5.5 mdp" },
+        { k: "Locales", v: "$750 mil a $1.5 mdp" },
+      ],
+      renta: "Compra una unidad ya rentada a un comerciante. La renta corre desde el primer mes en operación de la unidad, con una referencia de 8% anual neto: la cuota de mantenimiento la paga el comerciante.",
+      ejemplos: [
+        { u: "Local de $1 mdp", m: "≈ $6,700 al mes" },
+        { u: "Bodega de $4.3 mdp", m: "≈ $28,700 al mes" },
+      ],
+      nota: "Cifras de referencia. La renta de cada unidad es la de su contrato. La plusvalía no está garantizada. Precios sujetos a disponibilidad.",
+      cta: { proyecto: "Gómez Palacio" },
+    },
     fotos: [
       "/images/obra-gomez-palacio.jpg",
       "/images/bitacora/gomez-01.jpg",
@@ -247,9 +275,33 @@ const PROYECTOS = [
 /* ══════════════════════════════════════════
    AGENDA FORM
 ══════════════════════════════════════════ */
-function AgendaForm() {
-  const [form, setForm] = useState({ nombre: "", telefono: "", email: "", interes: "", presupuesto: "" });
+const WHATSAPP_NUMERO = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "528141948410";
+const UTM_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "gclid", "fbclid"];
+
+/* Guarda el origen de la primera visita (UTM del anuncio) para mandarlo con el contacto */
+function leerOrigen() {
+  let guardado = {};
+  try { guardado = JSON.parse(sessionStorage.getItem("mh_origen") || "{}"); } catch {}
+  const params = new URLSearchParams(window.location.search);
+  const actual = {};
+  UTM_KEYS.forEach((k) => { const v = params.get(k); if (v) actual[k] = v; });
+  const origen = Object.keys(guardado).length ? guardado : actual;
+  if (!Object.keys(guardado).length && Object.keys(actual).length) {
+    try { sessionStorage.setItem("mh_origen", JSON.stringify(actual)); } catch {}
+  }
+  return origen;
+}
+
+const FORM_VACIO = { nombre: "", telefono: "", email: "", objetivo: "", producto: "", proyecto: "Gómez Palacio", presupuesto: "", empresa_web: "" };
+
+function AgendaForm({ preset }) {
+  const [form, setForm] = useState(() => ({ ...FORM_VACIO, ...(preset || {}) }));
+  const [consentimiento, setConsentimiento] = useState(false);
   const [errors, setErrors] = useState({});
+  const [enviando, setEnviando] = useState(false);
+  const origenRef = useRef({});
+
+  useEffect(() => { origenRef.current = leerOrigen(); }, []);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -271,19 +323,44 @@ function AgendaForm() {
     if (emailTrimmed && emailRef.current && emailRef.current.validity.typeMismatch) {
       next.email = "Ingresa un correo electrónico válido.";
     }
-    if (!form.interes) next.interes = "Selecciona una opción.";
+    if (!form.objetivo) next.objetivo = "Selecciona una opción.";
+    if (!consentimiento) next.consentimiento = "Necesitamos tu autorización para contactarte.";
     return next;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (enviando) return;
     const next = validate();
     if (Object.keys(next).length > 0) { setErrors(next); return; }
+    setEnviando(true);
+
     const emailTrimmed = form.email.trim();
+    const datos = {
+      ...form,
+      nombre: form.nombre.trim(),
+      email: emailTrimmed,
+      consentimiento: true,
+      ...origenRef.current,
+      pagina: window.location.href.slice(0, 200),
+      referer: document.referrer.slice(0, 200),
+    };
+
+    // 1) Guardar el contacto. Si tarda o falla, igual seguimos a WhatsApp para no perder a la persona.
+    try {
+      await fetch("/api/lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(datos),
+        signal: AbortSignal.timeout(5000),
+      });
+    } catch {}
+
+    // 2) Abrir WhatsApp con el resumen
     const msg = encodeURIComponent(
-      `Hola Mercahorro, soy ${form.nombre.trim()}. Me interesa: ${form.interes}. Presupuesto: ${form.presupuesto || "No especificado"}. Tel: ${form.telefono}. Email: ${emailTrimmed || "No proporcionado"}.`
+      `Hola Mercahorro, soy ${datos.nombre}. Busco: ${form.objetivo}. Producto: ${form.producto || "Por definir"}. Plaza: ${form.proyecto}. Presupuesto: ${form.presupuesto || "No especificado"}. Tel: ${form.telefono}. Email: ${emailTrimmed || "No proporcionado"}.`
     );
-    window.location.href = `https://wa.me/528141948410?text=${msg}`;
+    window.location.href = `https://wa.me/${WHATSAPP_NUMERO}?text=${msg}`;
   };
 
   const inputStyle = {
@@ -292,12 +369,15 @@ function AgendaForm() {
     outline: "none", background: "#fff", color: "#111",
     boxSizing: "border-box", fontFamily: "inherit",
   };
+  const labelStyle = { fontSize: 12, fontWeight: 700, color: "#374151", textTransform: "uppercase", letterSpacing: "0.08em", display: "block", marginBottom: 6 };
   const errorStyle = { fontSize: 12, color: "#dc2626", marginTop: 4, display: "block" };
 
   return (
     <form onSubmit={handleSubmit} noValidate className="mh-form" style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      {/* Campo trampa para bots, invisible para personas */}
+      <input type="text" name="empresa_web" value={form.empresa_web} onChange={handleChange} tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ position: "absolute", left: "-9999px", width: 1, height: 1, opacity: 0 }} />
       <div>
-        <label htmlFor="form-nombre" style={{ fontSize: 12, fontWeight: 700, color: "#374151", textTransform: "uppercase", letterSpacing: "0.08em", display: "block", marginBottom: 6 }}>Nombre completo *</label>
+        <label htmlFor="form-nombre" style={labelStyle}>Nombre completo *</label>
         <input
           id="form-nombre" name="nombre" type="text"
           value={form.nombre} onChange={handleChange}
@@ -311,7 +391,7 @@ function AgendaForm() {
         {errors.nombre && <span id="error-nombre" role="alert" style={errorStyle}>{errors.nombre}</span>}
       </div>
       <div>
-        <label htmlFor="form-telefono" style={{ fontSize: 12, fontWeight: 700, color: "#374151", textTransform: "uppercase", letterSpacing: "0.08em", display: "block", marginBottom: 6 }}>WhatsApp *</label>
+        <label htmlFor="form-telefono" style={labelStyle}>WhatsApp *</label>
         <input
           id="form-telefono" name="telefono" type="tel"
           value={form.telefono} onChange={handleTel}
@@ -326,7 +406,7 @@ function AgendaForm() {
         {errors.telefono && <span id="error-telefono" role="alert" style={errorStyle}>{errors.telefono}</span>}
       </div>
       <div>
-        <label htmlFor="form-email" style={{ fontSize: 12, fontWeight: 700, color: "#374151", textTransform: "uppercase", letterSpacing: "0.08em", display: "block", marginBottom: 6 }}>Correo electrónico</label>
+        <label htmlFor="form-email" style={labelStyle}>Correo electrónico</label>
         <input
           ref={emailRef}
           id="form-email" name="email" type="email"
@@ -340,48 +420,80 @@ function AgendaForm() {
         {errors.email && <span id="error-email" role="alert" style={errorStyle}>{errors.email}</span>}
       </div>
       <div>
-        <label htmlFor="form-interes" style={{ fontSize: 12, fontWeight: 700, color: "#374151", textTransform: "uppercase", letterSpacing: "0.08em", display: "block", marginBottom: 6 }}>¿Qué te interesa? *</label>
+        <label htmlFor="form-objetivo" style={labelStyle}>¿Para qué lo buscas? *</label>
         <select
-          id="form-interes" name="interes"
-          value={form.interes} onChange={handleChange}
+          id="form-objetivo" name="objetivo"
+          value={form.objetivo} onChange={handleChange}
           required
-          aria-invalid={!!errors.interes}
-          aria-describedby={errors.interes ? "error-interes" : undefined}
-          style={{ ...inputStyle, color: form.interes ? "#111" : "#9ca3af", borderColor: errors.interes ? "#dc2626" : "#d1d5db" }}
+          aria-invalid={!!errors.objetivo}
+          aria-describedby={errors.objetivo ? "error-objetivo" : undefined}
+          style={{ ...inputStyle, color: form.objetivo ? "#111" : "#9ca3af", borderColor: errors.objetivo ? "#dc2626" : "#d1d5db" }}
         >
           <option value="" disabled>Selecciona una opción</option>
-          <option value="Local para operar mi negocio">🏪 Local para operar mi negocio</option>
-          <option value="Local ya rentado como inversión">📈 Local ya rentado (inversión)</option>
-          <option value="Bodega mayorista">🏭 Bodega mayorista</option>
+          <option value="Invertir en una unidad ya rentada">Invertir en una unidad ya rentada</option>
+          <option value="Comprar para operar mi negocio">Comprar para operar mi negocio</option>
+          <option value="Rentar para operar mi negocio">Rentar para operar mi negocio</option>
         </select>
-        {errors.interes && <span id="error-interes" role="alert" style={errorStyle}>{errors.interes}</span>}
+        {errors.objetivo && <span id="error-objetivo" role="alert" style={errorStyle}>{errors.objetivo}</span>}
+      </div>
+      <div className="mh-form-row">
+        <div>
+          <label htmlFor="form-producto" style={labelStyle}>Tipo de unidad</label>
+          <select id="form-producto" name="producto" value={form.producto} onChange={handleChange}
+            style={{ ...inputStyle, color: form.producto ? "#111" : "#9ca3af" }}>
+            <option value="" disabled>Selecciona</option>
+            <option value="Local">Local</option>
+            <option value="Bodega">Bodega</option>
+            <option value="Aún no sé">Aún no sé</option>
+          </select>
+        </div>
+        <div>
+          <label htmlFor="form-proyecto" style={labelStyle}>Plaza</label>
+          <select id="form-proyecto" name="proyecto" value={form.proyecto} onChange={handleChange} style={inputStyle}>
+            <option value="Gómez Palacio">Gómez Palacio</option>
+            <option value="Silao">Silao</option>
+            <option value="Cualquiera">Cualquiera</option>
+          </select>
+        </div>
       </div>
       <div>
-        <label htmlFor="form-presupuesto" style={{ fontSize: 12, fontWeight: 700, color: "#374151", textTransform: "uppercase", letterSpacing: "0.08em", display: "block", marginBottom: 6 }}>Rango de presupuesto</label>
+        <label htmlFor="form-presupuesto" style={labelStyle}>Presupuesto aproximado</label>
         <select
           id="form-presupuesto" name="presupuesto"
           value={form.presupuesto} onChange={handleChange}
           style={{ ...inputStyle, color: form.presupuesto ? "#111" : "#9ca3af" }}
         >
           <option value="" disabled>Selecciona un rango</option>
-          <option value="Menos de $500,000 MXN">Menos de $500,000 MXN</option>
-          <option value="$500,000 – $1,000,000 MXN">$500,000 – $1,000,000 MXN</option>
-          <option value="$1,000,000 – $3,000,000 MXN">$1,000,000 – $3,000,000 MXN</option>
-          <option value="Más de $3,000,000 MXN">Más de $3,000,000 MXN</option>
+          <option value="$750,000 – $1,500,000 MXN">$750,000 – $1,500,000 MXN</option>
+          <option value="$1,500,000 – $3,000,000 MXN">$1,500,000 – $3,000,000 MXN</option>
+          <option value="$3,000,000 – $5,500,000 MXN">$3,000,000 – $5,500,000 MXN</option>
+          <option value="Más de $5,500,000 MXN">Más de $5,500,000 MXN</option>
           <option value="Solo renta / Prefiero no decir">Solo renta / Prefiero no decir</option>
         </select>
       </div>
-      <button type="submit" style={{
-        background: "#1A5C33", color: "#fff", border: "none", borderRadius: 8,
+      <div>
+        <label style={{ display: "flex", gap: 10, alignItems: "flex-start", fontSize: 13, color: "#374151", lineHeight: 1.5, cursor: "pointer" }}>
+          <input type="checkbox" checked={consentimiento}
+            onChange={(e) => { setConsentimiento(e.target.checked); if (errors.consentimiento) setErrors({ ...errors, consentimiento: "" }); }}
+            aria-invalid={!!errors.consentimiento}
+            style={{ marginTop: 3, width: 18, height: 18, accentColor: "#1A5C33", flexShrink: 0 }} />
+          <span>
+            Acepto el <a href="/aviso-de-privacidad" target="_blank" rel="noopener" style={{ color: "#1A5C33", fontWeight: 700 }}>aviso de privacidad</a> y que un asesor de Grupo Mercahorro me contacte por WhatsApp o teléfono.
+          </span>
+        </label>
+        {errors.consentimiento && <span role="alert" style={errorStyle}>{errors.consentimiento}</span>}
+      </div>
+      <button type="submit" disabled={enviando} style={{
+        background: enviando ? "#4b7a5c" : "#1A5C33", color: "#fff", border: "none", borderRadius: 8,
         padding: "16px", fontSize: 15, fontWeight: 800,
         letterSpacing: "0.08em", textTransform: "uppercase",
-        cursor: "pointer", transition: "background 0.2s", marginTop: 4,
+        cursor: enviando ? "wait" : "pointer", transition: "background 0.2s", marginTop: 4,
         fontFamily: "inherit",
       }}>
-        CONTINUAR EN WHATSAPP →
+        {enviando ? "ENVIANDO…" : "ENVIAR Y CONTINUAR EN WHATSAPP →"}
       </button>
       <p style={{ margin: 0, fontSize: 11, color: "#9ca3af", textAlign: "center" }}>
-        Al continuar, los datos que ingreses se incluirán en un mensaje de WhatsApp. Deberás enviarlo para completar tu solicitud.
+        Tus datos quedan registrados y un asesor te contactará. También se abrirá WhatsApp para que puedas escribirnos de inmediato.
       </p>
     </form>
   );
@@ -416,24 +528,13 @@ function StatCard({ value, suffix, unit, label, sub }) {
    MAIN PAGE
 ══════════════════════════════════════════ */
 export default function MercahorroPage() {
-  const [statsOn, setStatsOn] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [modalData, setModalData] = useState(null);
-  const statsRef = useRef(null);
+  const [formPreset, setFormPreset] = useState(null);
 
-  const centros  = useCounter(3,   1200, statsOn);
-  const comerc   = useCounter(300, 2000, statsOn);
-
-  useEffect(() => {
-    const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) setStatsOn(true); },
-      { threshold: 0.3 }
-    );
-    if (statsRef.current) obs.observe(statsRef.current);
-    return () => obs.disconnect();
-  }, []);
-
-  const scrollToForm = () => {
+  // Lleva al formulario. Si recibe un preset (p. ej. { proyecto: "Gómez Palacio" }), lo precarga.
+  const scrollToForm = (preset) => {
+    if (preset && !preset.target) setFormPreset((prev) => ({ datos: { ...preset }, version: (prev?.version || 0) + 1 }));
     document.getElementById("agenda")?.scrollIntoView({ behavior: "smooth" });
   };
 
@@ -441,7 +542,7 @@ export default function MercahorroPage() {
     <div style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif", margin: 0, padding: 0, color: "#111" }}>
 
       {/* ══ MODAL ══ */}
-      {modalData && <Modal data={modalData} onClose={() => setModalData(null)} />}
+      {modalData && <Modal data={modalData} onClose={() => setModalData(null)} onCta={(preset) => { setModalData(null); scrollToForm(preset); }} />}
 
       {/* ══ NAV ══ */}
       <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, backgroundColor: "#ffffff", borderBottom: "2px solid #1A5C33", height: 80, display: "flex", alignItems: "center" }}>
@@ -531,7 +632,7 @@ export default function MercahorroPage() {
           <div style={{ maxWidth: 720 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 24 }}>
               <div style={{ width: 40, height: 3, background: "#9B1C1C" }} />
-              <span style={{ color: "#9B1C1C", fontSize: 11, fontWeight: 800, letterSpacing: "0.35em", textTransform: "uppercase" }}>Desarrollo inmobiliario · Abasto de alimentos</span>
+              <span style={{ color: "#9B1C1C", fontSize: 11, fontWeight: 800, letterSpacing: "0.35em", textTransform: "uppercase" }}>Hecho por comerciantes, para comerciantes</span>
             </div>
             <h1 style={{ margin: 0, lineHeight: 1.0, fontWeight: 900, textTransform: "uppercase", fontSize: "clamp(22px, 7vw, 82px)", textShadow: "0 2px 16px rgba(0,0,0,0.8)" }}>
               <span style={{ display: "block", color: "#fff" }}>DESARROLLAMOS</span>
@@ -556,13 +657,13 @@ export default function MercahorroPage() {
       </section>
 
       {/* ══ ESTADÍSTICAS ══ */}
-      <section ref={statsRef} style={{ background: "#fff", borderTop: "4px solid #1A5C33", borderBottom: "1px solid #e5e7eb" }}>
+      <section style={{ background: "#fff", borderTop: "4px solid #1A5C33", borderBottom: "1px solid #e5e7eb" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
           <div className="mh-stats-grid">
-            <StatCard value={centros} suffix=""   label="Centros en operación"   sub="Dos en Torreón y uno en Monterrey" />
-            <StatCard value={comerc}  suffix="+"  label="Comerciantes activos"   sub="En nuestros centros" />
-            <StatCard value="≈52,000" unit="m²"   label="Superficie desarrollada" sub="En nuestros desarrollos" />
-            <StatCard value="≈20"     unit="años"  label="Experiencia del equipo"  sub="En desarrollo inmobiliario" />
+            <StatCard value="19+"     unit="años"  label="De trayectoria"          sub="Desde 2007, con Plaza Abastos Torreón" />
+            <StatCard value="300+"                 label="Comerciantes"            sub="En todo el portafolio" />
+            <StatCard value="52,000+" unit="m²"    label="Superficie desarrollada" sub="En nuestros desarrollos" />
+            <StatCard value="5"                    label="Desarrollos"             sub="En Torreón, Monterrey, Gómez Palacio y Silao" />
           </div>
         </div>
       </section>
@@ -585,7 +686,7 @@ export default function MercahorroPage() {
 
             {/* Tarjeta A — Negocios */}
             <div
-              onClick={scrollToForm}
+              onClick={() => scrollToForm({ objetivo: "Comprar para operar mi negocio" })}
               style={{ background: "#fff", border: "2px solid #1A5C33", borderRadius: 20, padding: "48px 36px", cursor: "pointer", transition: "transform 0.2s, box-shadow 0.2s", position: "relative", overflow: "hidden" }}
               onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-6px)"; e.currentTarget.style.boxShadow = "0 16px 40px rgba(26,92,51,0.15)"; }}
               onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
@@ -615,7 +716,7 @@ export default function MercahorroPage() {
 
             {/* Tarjeta B — Inversión */}
             <div
-              onClick={scrollToForm}
+              onClick={() => scrollToForm({ objetivo: "Invertir en una unidad ya rentada" })}
               style={{ background: "#fff", border: "2px solid #9B1C1C", borderRadius: 20, padding: "48px 36px", cursor: "pointer", transition: "transform 0.2s, box-shadow 0.2s", position: "relative", overflow: "hidden" }}
               onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-6px)"; e.currentTarget.style.boxShadow = "0 16px 40px rgba(155,28,28,0.15)"; }}
               onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
@@ -626,10 +727,10 @@ export default function MercahorroPage() {
                 Quiero invertir en un activo comercial
               </h3>
               <p style={{ margin: "0 0 28px", fontSize: 16, color: "#374151", lineHeight: 1.7 }}>
-                Compra de locales y bodegas como patrimonio inmobiliario, con condiciones específicas para cada espacio y proyecto.
+                Compra un local o bodega ya rentado a un comerciante con negocio en operación, y cobra renta desde el primer mes en operación de la unidad.
               </p>
               <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 28 }}>
-                {["Compra directa de un inmueble comercial", "Disponibilidad y condiciones por proyecto", "Información comercial para evaluar cada opción"].map(item => (
+                {["Unidades ya rentadas a comerciantes", "Renta de referencia de 8% anual neto, según contrato", "Plusvalía como escenario, sin garantía"].map(item => (
                   <div key={item} style={{ display: "flex", alignItems: "center", gap: 10 }}>
                     <div style={{ width: 20, height: 20, background: "#fef2f2", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                       <span style={{ fontSize: 11, color: "#9B1C1C" }}>✓</span>
@@ -663,7 +764,7 @@ export default function MercahorroPage() {
             </p>
           </div>
           <div style={{ background: "#f9fafb", borderRadius: 20, padding: "40px 36px", border: "1px solid #e5e7eb", boxShadow: "0 4px 32px rgba(0,0,0,0.07)" }}>
-            <AgendaForm />
+            <AgendaForm key={formPreset?.version || 0} preset={formPreset?.datos} />
           </div>
         </div>
       </section>
@@ -833,11 +934,11 @@ export default function MercahorroPage() {
                 style={{ fontSize: 12, color: "#6b7280", textDecoration: "none", borderBottom: "1px solid rgba(255,255,255,0.15)", paddingBottom: 2, display: "inline-block" }}
                 onMouseEnter={e => e.currentTarget.style.color = "#fff"}
                 onMouseLeave={e => e.currentTarget.style.color = "#6b7280"}
-              >Inversionistas Institucionales y Patrimoniales →</a>
+              >Inversionistas institucionales →</a>
             </div>
             <div>
               <p style={{ margin: "0 0 16px", fontSize: 11, fontWeight: 700, color: "#9ca3af", letterSpacing: "0.25em", textTransform: "uppercase" }}>Centros y proyectos</p>
-              {[{ c: "Torreón", e: "En operación" }, { c: "Monterrey", e: "En operación" }, { c: "Gómez Palacio", e: "En desarrollo" }, { c: "Silao", e: "En desarrollo" }].map(({ c, e }) => (
+              {[{ c: "Torreón", e: "En operación" }, { c: "Monterrey", e: "En operación" }, { c: "Gómez Palacio", e: "85% de avance · Apertura prevista feb 2027" }, { c: "Silao", e: "En desarrollo" }].map(({ c, e }) => (
                 <div key={c} style={{ marginBottom: 12 }}>
                   <div style={{ fontSize: 14, fontWeight: 700, color: "#f3f4f6" }}>{c}</div>
                   <div style={{ fontSize: 12, color: "#6b7280" }}>{e}</div>
@@ -849,10 +950,9 @@ export default function MercahorroPage() {
               {[
                 { label: "Merca México",  sub: "Sector de abasto",        href: "https://mercamexico.mx" },
                 { label: "Merca Capital", sub: "Plataforma de inversión",  href: "https://mercacapital.com" },
-                { label: "Mercahorro",    sub: "Red de centros de abasto", href: "#" },
-                { label: "Plaza Abastos", sub: "Marca regional",           href: "#" },
+                { label: "Mercahorro",    sub: "Directorio de comercios", href: "https://mercahorro.com.mx" },
               ].map(({ label, sub, href }) => (
-                <a key={label} href={href} target={href.startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer"
+                <a key={label} href={href} target="_blank" rel="noopener noreferrer"
                   style={{ display: "block", marginBottom: 12, textDecoration: "none" }}>
                   <div style={{ fontSize: 14, fontWeight: 700, color: "#f3f4f6" }}>{label}</div>
                   <div style={{ fontSize: 12, color: "#6b7280" }}>{sub}</div>
@@ -861,7 +961,9 @@ export default function MercahorroPage() {
             </div>
             <div>
               <p style={{ margin: "0 0 16px", fontSize: 11, fontWeight: 700, color: "#9ca3af", letterSpacing: "0.25em", textTransform: "uppercase" }}>Contacto Inmediato</p>
-              <p style={{ margin: "0 0 16px", fontSize: 13, color: "#9ca3af", lineHeight: 1.6 }}>Para consultas sobre renta, compra o inversión en locales comerciales.</p>
+              <p style={{ margin: "0 0 12px", fontSize: 13, color: "#9ca3af", lineHeight: 1.6 }}>Para consultas sobre renta, compra o inversión en locales comerciales.</p>
+              <a href="tel:+528120008031" style={{ display: "block", margin: "0 0 4px", fontSize: 15, fontWeight: 700, color: "#f3f4f6", textDecoration: "none" }}>81 2000 8031</a>
+              <a href="mailto:contacto@mercahorro.com.mx" style={{ display: "block", margin: "0 0 16px", fontSize: 13, color: "#9ca3af", textDecoration: "none" }}>contacto@mercahorro.com.mx</a>
               <button onClick={scrollToForm}
                 style={{ background: "#1A5C33", color: "#fff", fontSize: 13, fontWeight: 700, padding: "10px 20px", borderRadius: 6, border: "none", cursor: "pointer", fontFamily: "inherit" }}>
                 Agendar Cita →
@@ -873,9 +975,7 @@ export default function MercahorroPage() {
           <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
             <p style={{ margin: 0, fontSize: 12, color: "#6b7280" }}>© 2026 Grupo Mercahorro · Promotora Mercahorro S.A. de C.V. · Todos los derechos reservados.</p>
             <div style={{ display: "flex", gap: 20 }}>
-              {["Aviso de Privacidad", "Términos de Uso"].map(t => (
-                <a key={t} href="#" style={{ fontSize: 12, color: "#6b7280", textDecoration: "none" }}>{t}</a>
-              ))}
+              <a href="/aviso-de-privacidad" style={{ fontSize: 12, color: "#6b7280", textDecoration: "none" }}>Aviso de Privacidad</a>
             </div>
           </div>
         </div>
@@ -885,6 +985,9 @@ export default function MercahorroPage() {
         @media (max-width: 640px) { .nav-desktop { display: none !important; } .nav-mobile-btn { display: block !important; } }
         @media (min-width: 641px) { .nav-mobile-btn { display: none !important; } }
         * { box-sizing: border-box; }
+        .mh-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .mh-ficha-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+        @media (max-width: 479px) { .mh-form-row { grid-template-columns: 1fr; } }
         .mh-form input:focus-visible,
         .mh-form select:focus-visible,
         .mh-form button:focus-visible {
