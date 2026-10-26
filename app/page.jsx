@@ -108,19 +108,19 @@ function Modal({ data, onClose, onCta }) {
                 ))}
               </div>
               <p style={{ margin: "16px 0 10px", fontSize: 14, color: "#374151", lineHeight: 1.6 }}>{data.ficha.renta}</p>
-              <div style={{ border: "1px solid #e5e7eb", borderRadius: 10, overflow: "hidden" }}>
+              {data.ficha.ejemplos?.length > 0 && <div style={{ border: "1px solid #e5e7eb", borderRadius: 10, overflow: "hidden" }}>
                 {data.ficha.ejemplos.map(({ u, m }, i) => (
                   <div key={u} style={{ display: "flex", justifyContent: "space-between", gap: 12, padding: "10px 14px", fontSize: 14, background: i % 2 ? "#fff" : "#f0fdf4" }}>
                     <span style={{ color: "#374151" }}>{u}</span>
                     <span style={{ fontWeight: 800, color: "#111" }}>{m}</span>
                   </div>
                 ))}
-              </div>
+              </div>}
               <p style={{ margin: "10px 0 16px", fontSize: 11, color: "#9ca3af", lineHeight: 1.5 }}>{data.ficha.nota}</p>
               {onCta && (
                 <button onClick={() => onCta(data.ficha.cta)}
                   style={{ width: "100%", background: "#1A5C33", color: "#fff", border: "none", borderRadius: 8, padding: "14px", fontSize: 14, fontWeight: 800, letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer", fontFamily: "inherit" }}>
-                  Quiero información de esta plaza →
+                  {data.ficha.ctaLabel || "Quiero información de esta plaza →"}
                 </button>
               )}
             </div>
@@ -198,6 +198,18 @@ function ObraCard({ data, onOpen }) {
 /* ══════════════════════════════════════════
    PROYECTOS DATA
 ══════════════════════════════════════════ */
+const FICHA_TORREON = {
+  datos: [
+    { k: "Unidades en Torreón", v: "300" },
+    { k: "Ocupadas", v: "260" },
+    { k: "Disponibles para renta", v: "40" },
+  ],
+  renta: "Opera tu negocio en plazas de abasto ya consolidadas, con flujo de clientes desde el primer día. Tenemos locales y bodegas disponibles para renta en Torreón.",
+  nota: "Disponibilidad sujeta a cambios. Un asesor te comparte las unidades libres, medidas y condiciones de renta.",
+  cta: { proyecto: "Torreón", objetivo: "Rentar para operar mi negocio" },
+  ctaLabel: "Quiero rentar en Torreón →",
+};
+
 const PROYECTOS = [
   {
     ciudad: "Monterrey", estado: "N.L.",
@@ -209,8 +221,10 @@ const PROYECTOS = [
   {
     ciudad: "Torreón", estado: "Coah.",
     proyecto: "Mercahorro Torreón",
-    pct: 100, fase: "Plaza mayorista en operación continua",
+    pct: 100, fase: "En operación · Locales y bodegas disponibles para renta",
     img: "/images/obra-torreon.jpg", status: "operando",
+    badgeLabel: "Disponible para renta",
+    ficha: FICHA_TORREON,
     fotos: [
       "/images/obra-torreon.jpg",
       "/images/bitacora/torreon-01.jpg",
@@ -252,8 +266,10 @@ const PROYECTOS = [
   {
     ciudad: "Torreón", estado: "Coah.",
     proyecto: "Plaza Abastos Torreón",
-    pct: 100, fase: "Centro comercial de abasto en operación",
+    pct: 100, fase: "En operación · Locales y bodegas disponibles para renta",
     img: "/images/obra-plaza-abastos-torreon.jpg", status: "operando",
+    badgeLabel: "Disponible para renta",
+    ficha: FICHA_TORREON,
     fotos: [
       "/images/obra-plaza-abastos-torreon.jpg",
       "/images/bitacora/plaza-abastos-01.jpg",
