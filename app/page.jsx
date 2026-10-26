@@ -451,6 +451,7 @@ function AgendaForm({ preset }) {
           <label htmlFor="form-proyecto" style={labelStyle}>Plaza</label>
           <select id="form-proyecto" name="proyecto" value={form.proyecto} onChange={handleChange} style={inputStyle}>
             <option value="Gómez Palacio">Gómez Palacio</option>
+            <option value="Torreón">Torreón</option>
             <option value="Silao">Silao</option>
             <option value="Cualquiera">Cualquiera</option>
           </select>
